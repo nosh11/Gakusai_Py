@@ -6,6 +6,12 @@ SCREEN_HEIGHT = 720
 TILE_SIZE = 32
 
 
+bullet_speed = {"up": (0, -1, 90), 
+                "down": (0, 1, 270), 
+                "right": (1, 0, 0), 
+                "left": (-1, 0, 180)}
+
+
 # How To Play
 # 0 -> JP, 1 -> EN
 

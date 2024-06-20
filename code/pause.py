@@ -12,6 +12,9 @@ class Pause:
         self.display_surface = pygame.display.get_surface()
         # Sprite Group を定義
         self.all_sprites = pygame.sprite.Group()
+
+        # Sound
+        self.sound = pygame.mixer.Sound("sound/select.wav")
         # Setup
         self.setup()
 
@@ -36,5 +39,7 @@ class Pause:
             self.display_surface.blit(label,pos)
         if self.start_button[lang].draw():
             self.appstate.set("level")
+            self.sound.play()
         if self.language_button[lang].draw():
             self.appstate.lang = (lang + 1) % 2
+            self.sound.play()
