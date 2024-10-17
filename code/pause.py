@@ -1,7 +1,5 @@
 import pygame
 from settings import *
-from player import Player
-from entities import Bed
 from appstate import AppState
 from ui import Button
 
@@ -19,11 +17,11 @@ class Pause:
         self.setup()
 
     def setup(self):
-        font = pygame.font.Font('font/TsukimiRounded-Medium.ttf', 32)
         self.label = {0: [], 1: []}
         self.start_button = []
         self.language_button = []
         button = pygame.image.load('img/button.png')
+        font = pygame.font.Font('font/unifont.otf', 32)
         for i in range(2):
             for line in HOW_TO_PLAY[i]:
                 self.label[i].append(font.render(line, True, (255,255,255)))

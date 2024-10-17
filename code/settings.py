@@ -22,14 +22,20 @@ HOW_TO_PLAY = {
         0: [
             "あそびかた",
             "",
-            "すぺーすきー で じゅうをうてます",
-            "せまりくるてき から べっどを",
-            "まもりましょう"
+            "スペースキー: 銃を撃つ",
+            "矢印キー: 移動",
+            "",
+            "降ってくるりんごを キャッチ または",
+            "狙撃 すると ポイントが溜まります",
+            "がいこつは 気合で さけましょう"
         ],
         1: [
             "How To Play",
             "",
-            "Press the space key to shoot the gun.",
-            "Defend the bed from enemies"
+            "Space key: Shoot the gun",
+            "Arrow keys: Move",
+            "",
+            " - Catch or Shoot falling apples!",
+            " - Avoid skulls!"
         ]
 }

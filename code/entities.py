@@ -2,29 +2,43 @@ import pygame, random
 from support import import_folder
 from settings import *
 
-class Bed(pygame.sprite.Sprite):
-    def __init__(self, pos, group_nocollide, group) -> None:
-        super().__init__(group_nocollide)
-        self.image = pygame.transform.scale(pygame.image.load('img/bed.png'), (200, 200))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = pos
-        self.collide = CollideBox(group,(pos[0]+20,pos[1]+80),(150,120))
-    def move(self,dt):
-        pass
-    def update(self, dt):
-        pass
-class CollideBox(pygame.sprite.Sprite):
-    def __init__(self, group, center, size) -> None:
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, pos, group, d: str):
         super().__init__(group)
-        s = pygame.Surface(size)
-        s.set_alpha(128)
-        self.image = s
+        self.spd = bullet_speed[d]
+        self.image = pygame.transform.rotate(pygame.image.load('img/bullet.png'),self.spd[2])
         self.rect = self.image.get_rect()
-        self.rect.topleft = center
+        self.rect.center = pos
+        self.hp = 2000
     def move(self,dt):
-        pass
+        self.rect.x += self.spd[0] * 800 * dt
+        self.rect.y += self.spd[1] * 800 * dt
     def update(self, dt):
-        pass
+        self.move(dt)
+        self.hp -= 1
+        if self.hp <= 0:
+            self.kill()
+class Apple(pygame.sprite.Sprite):
+    def __init__(self, group, name="apple") -> None:
+        super().__init__(group)
+        self.name = name
+        self.group = group
+        self.radius = 10
+        self.image = pygame.transform.scale(pygame.image.load(f'img/{name}.png'),(50,50))
+        self.y = -50
+        self.rect = self.image.get_rect()
+        self.repos()
+    def move(self,dt):
+        self.y += self.speed * dt
+        self.rect.centery = self.y
+    def repos(self):
+        self.y = -(random.random()*150+50)
+        self.rect.centerx = random.random()*(SCREEN_WIDTH-100)+50
+        self.speed = (random.random()+1)*100
+    def update(self, dt):
+        self.move(dt)
+    
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self, pos, group, name, scale, speed) -> None:
@@ -92,26 +106,9 @@ class Mob(pygame.sprite.Sprite):
             self.status = random.choice(list(bullet_speed.keys()))
             self.velocity = tuple(bullet_speed[self.status][:2])
             self.moving = 1000
-
     def update(self, dt):
         self.move(dt)
         self.animate(dt)
         self.moving -= 1
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, pos, group, d: str, status: dict):
-        super().__init__(group)
-        self.spd = bullet_speed[d]
-        self.image = pygame.transform.rotate(pygame.image.load('img/bullet.png'),self.spd[2])
-        self.rect = self.image.get_rect()
-        self.rect.center = pos
-        self.status = status
-        self.hp = 1000
-    def move(self,dt):
-        self.rect.x += self.spd[0] * self.status["bullet_speed"]
-        self.rect.y += self.spd[1] * self.status["bullet_speed"]
-
-    def update(self, dt):
-        self.move(dt)
-        self.hp -= 1
-        if self.hp <= 0:
-            self.kill()
+    def speak(self):
+        print(self.name)

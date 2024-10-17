@@ -1,7 +1,7 @@
 import pygame
 from settings import *
 from player import Player
-from entities import Bed, Mob
+from entities import Mob
 from ui import Button
 from appstate import AppState
 
@@ -20,8 +20,6 @@ class Level:
 
     def setup(self):
         self.player = Player(((SCREEN_WIDTH-900)//2, (SCREEN_HEIGHT+300)//2), self.all_sprites)
-        self.bed = Bed((140, 260), self.all_nocollide_sprites, self.all_sprites)
-        Mob(((SCREEN_WIDTH)//2, (SCREEN_HEIGHT-500)//2), self.all_sprites,"blue_cloth_guy", (60, 60), 100)
         self.button = []
         for i in range(2):
             self.button.append(Button(50, 600, pygame.image.load(f'img/bullet_levelup_{i}.png'), 3))
