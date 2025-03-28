@@ -3,3 +3,9 @@
 .git
 database.db
 *.zip
+/.venv
+
+_pycache_/
+__pycache__/
+
+static/
