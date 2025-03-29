@@ -3,17 +3,17 @@ from abc import ABC, abstractmethod, ABCMeta
 
 import pygame
 
+from app_controller import AppController
 from settings import *
 from commons.languages import Language
-from appstats import ViewManager
 
 class View(metaclass=ABCMeta):
-    def __init__(self, app_stats: ViewManager, language: Language):
+    def __init__(self, app_controller: AppController, language: Language):
         self.display_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.all_sprites = pygame.sprite.Group()
         self.all_nocollide_sprites = pygame.sprite.Group()
         self.sound_channel = pygame.mixer.Channel(0)
-        self._view_manager = app_stats
+        self._app_controller = app_controller
         self.__language = language
         self.update_language(language)
         self.load_text()

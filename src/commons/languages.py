@@ -1,4 +1,5 @@
 from enum import Enum
+from commons.file_manager import get_static_file_path, get_resource_file_path
 import pygame
 import yaml
 
@@ -14,13 +15,15 @@ class Language(Enum):
         self.__font = font
 
     def get_font(self, size=32) -> pygame.font.Font:
-        return pygame.font.Font(f"static/fonts/{self.__font}", size)
+        file_path = get_static_file_path(f"fonts/{self.__font}")
+        return pygame.font.Font(file_path, size)
     
     def get_display_name(self) -> str:
         return self.displayname
 
 def get_lang_texts(lang: Language) -> dict:
-    with open(f"static/lang/{lang.lang_id}.yml", "r", encoding="utf-8") as f:
+    file_path = get_resource_file_path(f"lang/{lang.lang_id}.yml")
+    with open(file_path, "r", encoding="utf-8") as f:
         return yaml.load(f, Loader=yaml.FullLoader)
     
 def get_langs() -> list:

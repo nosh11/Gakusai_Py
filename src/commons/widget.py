@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import pygame
+from commons.file_manager import get_static_file_path
 from commons.image_processor import BrightnessProcessor
 from commons.observe import Observable
 from settings import *
@@ -91,7 +92,7 @@ class UIWidgetClickable(UIWidgetHoberable, Observable):
 class Button(UIWidgetClickable, SurfaceWithText):
     @staticmethod
     def text_button(font: pygame.font.Font, text: str) -> pygame.Surface:
-        image = pygame.image.load("static/img/button.png")
+        image = pygame.image.load(get_static_file_path("img/button.png"))
         text_surface = font.render(text, True, (255, 255, 255))
         width = image.get_width()
         height = image.get_height()

@@ -7,12 +7,8 @@ import pygame
 
 from commons.view import View
 from settings import *
+from commons.interfaces import ViewUpdater
 
-
-class ViewUpdater(metaclass=ABCMeta):
-    @abstractmethod
-    def update(self) -> bool:
-        pass
 
 class ViewTransition(ViewUpdater, metaclass=ABCMeta):
     def __init__(self, seconds: float = 1.0):

@@ -1,3 +1,4 @@
+import pygame
 from commons.view import View
 from commons.languages import Language
 from commons.observe import Observer
@@ -34,7 +35,9 @@ class PauseView(View, Observer):
         self.current_tick += 1
 
     def tick(self):
-        pass
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self._app_controller.set_next_view(2)
 
     def update(self, o):
         if o == self.language_button and not self.language_button.clicked:
