@@ -1,6 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 
-class ViewUpdater(ABC):
+from pygame import Surface
+
+class ViewUpdater(metaclass=ABCMeta):
     @abstractmethod
     def update(self) -> bool:
         pass

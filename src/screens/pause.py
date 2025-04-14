@@ -1,17 +1,14 @@
 import pygame
+from commons.file_manager import get_static_file_path
 from commons.view import View
-from commons.languages import Language
+from model.languages import Language
 from commons.observe import Observer
 from settings import *
 from commons.widget import Button
 
 class PauseView(View, Observer):
-    def load_text(self):
+    def define_text_labels(self):
         self.font_console = self.get_language().get_font(10)
-        self.language_button = Button(self.display_surface, 100, 400, 
-                                      self.get_language().get_display_name(),
-                                      self.get_language().get_font(20))
-        self.language_button.add_observer(self)
 
     def setup(self):
         self.current_tick = 0
@@ -28,19 +25,18 @@ class PauseView(View, Observer):
                 , (0, texts.index(text) * 10)
             )
 
-        self.language_button.update()
-        self.language_button.draw()
-
 
         self.current_tick += 1
 
     def tick(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self._app_controller.set_next_view(2)
+                self._app_controller.set_transition_type("slide>slide")
+                self._app_controller.set_transition_seconds((0.01, 0.01))
+                self._app_controller.set_next_view("game")
 
     def update(self, o):
-        if o == self.language_button and not self.language_button.clicked:
-            languages = list(Language)
-            lang = languages[(languages.index(self.get_language()) + 1) % len(languages)]
-            self.update_language(lang)
+        pass
+
+    def on_load(self):
+        pygame.mixer.music.pause()

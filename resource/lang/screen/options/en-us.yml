@@ -1,0 +1,13 @@
+pause_menu:
+    title: "Pause Menu"
+    resume: "Resume"
+    restart: "Restart"
+    quit: "Quit"
+    description: 
+        - "How to play"
+        - ""
+        - "Space key: Shoot"
+        - "Arrow keys: Move"
+        - ""
+        - "Catch or snipe falling apples to earn points"
+        - "Avoid the skeletons with all your might"

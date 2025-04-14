@@ -26,5 +26,10 @@ def get_lang_texts(lang: Language) -> dict:
     with open(file_path, "r", encoding="utf-8") as f:
         return yaml.load(f, Loader=yaml.FullLoader)
     
+def get_screen_texts(screen_id: str, lang: Language) -> dict:
+    file_path = get_resource_file_path(f"lang/screen/{screen_id}/{lang.lang_id}.yml")
+    with open(file_path, "r", encoding="utf-8") as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+    
 def get_langs() -> list:
     return [lang.name for lang in Language]

@@ -10,6 +10,7 @@ class UIWidget(metaclass=ABCMeta):
         self.view_display_surface = view_display_surface
         self.pos = (x, y)
         self.showing_image = None
+        self.is_hidden = False
 
     def get_showing_image(self) -> pygame.Surface:
         if self.showing_image is None:
@@ -24,7 +25,8 @@ class UIWidget(metaclass=ABCMeta):
         pass
 
     def draw(self) -> None:
-        self.view_display_surface.blit(self.get_showing_image(), self.pos)
+        if not self.is_hidden:
+            self.view_display_surface.blit(self.get_showing_image(), self.pos)
 
 
 class SurfaceWithText:
