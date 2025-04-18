@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 import pygame
-from commons.file_manager import get_static_file_path
+from common.utils.file_manager import get_static_file_path
 from commons.image_processor import BrightnessProcessor
 from commons.observe import Observable
-from settings import *
+from . import *
 
 class UIWidget(metaclass=ABCMeta):
     def __init__(self, view_display_surface: pygame.Surface, x, y):

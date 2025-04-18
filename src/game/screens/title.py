@@ -1,9 +1,9 @@
 import random
 import pygame
 from commons.view import View
-from commons.file_manager import get_static_file_path
+from common.utils.file_manager import get_static_file_path
 from model.languages import Language
-from settings import *
+from . import *
 
 credit_surface: pygame.Surface
 

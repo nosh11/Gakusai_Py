@@ -6,15 +6,16 @@ from abc import ABCMeta, abstractmethod
 import pygame
 
 from commons.view import View
-from settings import *
+from . import *
 from commons.interfaces import ViewUpdater
+from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
 
 class ViewTransition(ViewUpdater, metaclass=ABCMeta):
     def __init__(self, seconds: float = 1.0):
         self.fade_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.fade_surface.fill((0, 0, 0))
-        self.ticks = int(seconds * FPS)  # 秒からticksに変換
+        self.ticks = int(seconds * SCREEN_FPS)  # 秒からticksに変換
         self.progress_func = lambda tick: tick / self.ticks
         self.easing_func = lambda x: x
         self.current_tick = 0

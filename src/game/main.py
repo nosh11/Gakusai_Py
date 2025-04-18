@@ -1,18 +1,12 @@
-import sys
 import pygame
 from app_controller import AppController
 import app_state
-from commons.file_manager import get_static_file_path
+from common.utils.file_manager import get_static_file_path
 from commons.interfaces import ViewUpdater
 from model.languages import Language
 from commons.view_transition import FadeTransition, SingleSlideTransition, RadialTransition, SlideTransition
-from model.user import User
-from screens.game import GameView
-from screens.map import MapView
-from screens.pause import PauseView
-from screens.sound_room import SoundRoomView
-from screens.title import OptionView, TitleView
-from settings import *
+from screens import *
+from consts import *
 from commons.view import View
 from commons.transition_controller import ViewTransitionSwitcher
 
@@ -60,8 +54,6 @@ while True:
         view_list = [showing_view, views[app_state.current_view]]
 
         transition_script = app_controller.get_transition_type()
-        # 1. "%view2view_transition_type%" -> single transition
-        # 2. "%single_transition_type%>%single_transition_type% -> multiple transitions
 
         transition: ViewUpdater = None
         transition_second = app_controller.get_transition_seconds()
@@ -110,4 +102,4 @@ while True:
         pygame.display.get_surface().blit(showing_view.display_surface, (0, 0))
         
     pygame.display.update()
-    pygame.time.Clock().tick(FPS)
+    pygame.time.Clock().tick(SCREEN_FPS)

@@ -1,10 +1,8 @@
 import pygame
-from commons.file_manager import get_static_file_path
 from commons.view import View
 from model.languages import Language
 from commons.observe import Observer
-from settings import *
-from commons.widget import Button
+from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
 class PauseView(View, Observer):
     def define_text_labels(self):
@@ -16,7 +14,7 @@ class PauseView(View, Observer):
     def display(self):
         self.display_surface.fill((224, 224, 224))
         texts = [
-            f"ticks: {self.current_tick}, seconds: {self.current_tick / FPS:.2f}, fps={FPS}",
+            f"ticks: {self.current_tick}, seconds: {self.current_tick / SCREEN_FPS:.2f}, fps={SCREEN_FPS}",
             f"screen={SCREEN_WIDTH}x{SCREEN_HEIGHT}",
         ]
         for text in texts:

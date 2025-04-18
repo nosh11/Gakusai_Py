@@ -1,19 +1,20 @@
 import pygame
 import app_state
-from commons.file_manager import get_static_file_path
+from common.utils.file_manager import get_static_file_path
 from commons.view import View
 from commons.widget import UIWidget
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from consts.screen_settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from . import *
 from model.languages import get_lang_texts
 
-class Sender:
-    def __init__(self, name: str, font: pygame.font.Font, color=(255, 255, 255)):
+class Character:
+    def __init__(self, name: str, font: pygame.font.Font = None, color=(255, 255, 255)):
         self.name = name
         self.color = color
-        self.font = font
+        self.font = font if font else pygame.font.Font(get_static_file_path("fonts/unifont.otf"), 50)
 
 class Message:
-    def __init__(self, text: str, font: pygame.font.Font, color=(255, 255, 255), sender: str=None):
+    def __init__(self, text: str, font: pygame.font.Font, color=(255, 255, 255), sender: Character=None):
         self.sender = sender
         self.color = color
         self.text = text
@@ -53,7 +54,8 @@ class MessageBox(UIWidget):
 
     def reset_sender_surface(self):
         if self.current_message.sender != None:
-            sender_label = self.current_message.font.render(self.current_message.sender, True, (255, 255, 255, 255), (0, 0, 0, 255))
+            sender: Character = self.current_message.sender
+            sender_label = sender.font.render(sender.name, True, (255, 255, 255, 255), (0, 0, 0, 255))
             self.sender_surface = pygame.Surface((sender_label.get_width() + 50, SCREEN_HEIGHT * 0.1))
             rect = sender_label.get_rect()
             rect.center = self.sender_surface.get_width() // 2, self.sender_surface.get_height() // 2
@@ -139,7 +141,7 @@ class GameView(View):
         self.message_box = MessageBox(self.display_surface)
         desc = get_lang_texts(self.get_language())["pause_menu"]["description"]
         for text in desc:
-            message = Message(text, self.get_language().get_font(50), sender="ゆに")
+            message = Message(text, self.get_language().get_font(20), sender=Character("Player"))
             self.message_box.add_message(message)
         self.space_pressed = False
         self.skip_pressed = False

@@ -1,0 +1,27 @@
+name: "Map 1"
+chipset: "plains"
+size_x: 10
+size_y: 10
+chips_map:
+  - [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  - [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+  - [0, 1, 0, 0, 0, 0, 0, 0, 1, 0]
+  - [0, 1, 0, 1, 1, 1, 1, 0, 1, 0]
+  - [0, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+  - [0, 1, 0, 1, 0, 0, 1, 0, 1, 0]
+  - [0, 1, 0, 1, 1, 1, 1, 0, 1, 0]
+  - [0, 1, 0, 0, 0, 0, 0, 0, 1, 0]
+  - [0, 1, 1, 1, 1, 1, 1, 1, 1, 0]
+entities:
+  - name: "Player"
+    type: "player"
+    position: [1, 1]
+    direction: "down"
+  - name: "NPC1"
+    type: "npc"
+    position: [5, 5]
+    direction: "left"
+  - name: "Tree"
+    type: "object"
+    position: [3, 3]
+    direction: "up"

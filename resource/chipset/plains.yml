@@ -1,0 +1,9 @@
+chipset_image: "chip1"
+chips:
+  - passable: true
+    id: 0
+    name: "grass"
+    size: [32, 32]
+    collision: false
+    durability: 0
+    layer: 0

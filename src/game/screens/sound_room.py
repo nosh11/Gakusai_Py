@@ -2,11 +2,11 @@
 
 import random
 import pygame
-from commons.file_manager import get_static_file_path
+from common.utils.file_manager import get_static_file_path
 from commons.observe import Observable, Observer
 from commons.view import View
 from commons.widget import UIWidget
-from settings import SCREEN_WIDTH
+from . import *
 
 
 class BGMFrame(UIWidget):

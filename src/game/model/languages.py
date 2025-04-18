@@ -1,5 +1,5 @@
 from enum import Enum
-from commons.file_manager import get_static_file_path, get_resource_file_path
+from common.utils.file_manager import get_static_file_path, get_resource_file_path
 import pygame
 import yaml
 
