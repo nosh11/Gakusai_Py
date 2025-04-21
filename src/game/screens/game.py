@@ -3,7 +3,7 @@ import app_state
 from common.utils.file_manager import get_static_file_path
 from commons.view import View
 from commons.widget import UIWidget
-from consts.screen_settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from common.consts.screen_settings import SCREEN_WIDTH, SCREEN_HEIGHT
 from . import *
 from model.languages import get_lang_texts
 

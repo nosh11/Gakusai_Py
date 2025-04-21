@@ -1,1 +1,1 @@
-from consts.screen_settings import *
+from common.consts.screen_settings import *

@@ -7,3 +7,19 @@ chips:
     collision: false
     durability: 0
     layer: 0
+
+  - passable: true
+    id: 1
+    name: "grass_1"
+    size: [32, 32]
+    collision: false
+    durability: 0
+    layer: 0
+  
+  - passable: true
+    id: 5
+    name: "grass_1"
+    size: [32, 32]
+    collision: false
+    durability: 0
+    layer: 0

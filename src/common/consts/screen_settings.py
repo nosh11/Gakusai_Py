@@ -1,0 +1,5 @@
+CHIP_SIZE = 16
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+SCREEN_FPS = 60
+FULL_SCREEN = False # not implemented yet
