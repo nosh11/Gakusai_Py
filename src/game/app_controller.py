@@ -1,7 +1,7 @@
 import sys
 import pygame
-from model.languages import Language
-import app_state
+from game.model.languages import Language
+from game.app_state import AppStats as stats
 
 class AppController:
     def __init__(self):
@@ -9,10 +9,10 @@ class AppController:
         self.__transition_seconds = (1.0, 1.0)
 
     def set_next_view(self, view: str):
-        app_state.current_view = view
+        stats.current_view = view
     
     def set_language(self, lang: Language):
-        app_state.current_lang = lang
+        stats.current_lang = lang
 
     def set_transition_type(self, transition_type: str):
         self.__transition_type = transition_type

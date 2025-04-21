@@ -4,7 +4,7 @@ import pygame
 
 from game.commons.view import View
 from game.interfaces.view_updater import ViewUpdater
-from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
+from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
 
 class ViewTransition(ViewUpdater, metaclass=ABCMeta):

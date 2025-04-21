@@ -4,8 +4,8 @@ import pygame
 
 from app_controller import AppController
 from . import *
-from model.languages import Language, get_screen_texts
-from consts import SCREEN_WIDTH, SCREEN_HEIGHT
+from game.model.languages import Language, get_screen_texts
+from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
 
 class View(metaclass=ABCMeta):
     def __init__(self, app_controller: AppController, language: Language, screen_id: str = None):

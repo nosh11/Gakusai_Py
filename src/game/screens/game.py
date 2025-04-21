@@ -1,5 +1,5 @@
 import pygame
-import app_state
+from game.app_state import AppStats as stats
 from common.utils.file_manager import get_static_file_path
 from commons.view import View
 from commons.widget import UIWidget
@@ -205,9 +205,9 @@ class GameView(View):
         self.message_box.next()
 
     def on_load(self):
-        if app_state.flags.get("bgm") != "bgm/bgm_2.wav":
+        if stats.flags.get("bgm") != "bgm/bgm_2.wav":
             pygame.mixer.music.load(get_static_file_path("bgm/bgm_2.wav"))
-            app_state.flags["bgm"] = "bgm/bgm_2.wav"
+            stats.flags["bgm"] = "bgm/bgm_2.wav"
             pygame.mixer.music.set_volume(0.5)
             pygame.mixer.music.play(-1)
         else:
