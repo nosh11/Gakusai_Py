@@ -69,6 +69,18 @@ class MapData:
         self.size_y = size_y
         self.chips_map = chips_map
         self.entities = entities
+    
+    def set_tile(self, x: int, y: int, chip_id: int) -> None:
+        """
+        指定した座標にチップをセットするメソッド
+        :param x: X座標
+        :param y: Y座標
+        :param chip_id: セットするチップのID
+        """
+        if 0 <= x < self.size_x and 0 <= y < self.size_y:
+            self.chips_map[y][x] = chip_id
+        else:
+            raise IndexError("指定された座標がマップの範囲外です。")
 
     def get_tile(self, x: int, y: int) -> int:
         """

@@ -1,10 +1,8 @@
 import pygame
 from commons.view import View
-from model.languages import Language
-from commons.observe import Observer
 from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
-class PauseView(View, Observer):
+class PauseView(View):
     def define_text_labels(self):
         self.font_console = self.get_language().get_font(10)
 
@@ -32,9 +30,6 @@ class PauseView(View, Observer):
                 self._app_controller.set_transition_type("slide>slide")
                 self._app_controller.set_transition_seconds((0.01, 0.01))
                 self._app_controller.set_next_view("game")
-
-    def update(self, o):
-        pass
 
     def on_load(self):
         pygame.mixer.music.pause()

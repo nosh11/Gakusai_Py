@@ -1,4 +1,4 @@
-from commons.interfaces import ViewUpdater
+from game.interfaces.view_updater import ViewUpdater
 from model.languages import Language
 
 current_view = "title"

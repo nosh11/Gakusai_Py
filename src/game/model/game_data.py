@@ -1,4 +1,4 @@
-from commons.observe import Observable
+from game.interfaces.observe import Observable
 
 class GameData(Observable):
     def __init__(self):

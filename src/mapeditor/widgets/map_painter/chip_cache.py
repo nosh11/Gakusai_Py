@@ -1,4 +1,4 @@
-from mapeditor.chipset_image import get_chip_image
+from mapeditor.widgets.map_painter.chipset_image import get_chip_image
 
 class SharedImageCache:
     """画像キャッシュを共有するためのクラス"""

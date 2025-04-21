@@ -1,14 +1,11 @@
-
 from abc import abstractmethod, ABCMeta
 
 import pygame
 
 from app_controller import AppController
 from . import *
-from model.languages import Language, get_lang_texts, get_screen_texts
+from model.languages import Language, get_screen_texts
 from consts import SCREEN_WIDTH, SCREEN_HEIGHT
-
-
 
 class View(metaclass=ABCMeta):
     def __init__(self, app_controller: AppController, language: Language, screen_id: str = None):

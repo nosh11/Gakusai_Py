@@ -1,9 +1,8 @@
-import random
 import pygame
 from commons.view import View
 from common.utils.file_manager import get_static_file_path
-from model.languages import Language
-from . import *
+from game.model.languages import Language
+from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
 
 credit_surface: pygame.Surface
 
@@ -51,7 +50,6 @@ class TitleView(View):
         self.display_surface.fill((100, 150, 30))
         self.background_image = pygame.image.load(get_static_file_path("img/croissant_boy.png"))
         self.current_choice = 0
-                             
 
     def display(self):
         self.display_surface.blit(self.background_image, (0, 0))
@@ -67,8 +65,6 @@ class TitleView(View):
         selected_text_surface = self.choices[selected_choice]
         selected_text_surface = self.get_language().get_font(50).render(f">", True, (255, 0, 0))
         self.display_surface.blit(selected_text_surface, (SCREEN_WIDTH // 2 + 130, SCREEN_HEIGHT // 2 + self.current_choice * 50))
-        
-            
 
 
     def tick(self):
@@ -107,7 +103,6 @@ class OptionView(View):
     def setup(self):
         self.current_choice = 0
         make_credit_surface()
-                             
 
     def display(self):
         if self.is_showing_credit:

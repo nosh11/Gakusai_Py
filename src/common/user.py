@@ -1,8 +1,4 @@
-
-
-
 import yaml
-
 
 class User:
     def __init__(self):

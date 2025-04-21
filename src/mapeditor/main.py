@@ -1,13 +1,15 @@
 import PyQt6, yaml
 from PyQt6.QtWidgets import (
     QApplication, 
-    QWidget, 
+    QWidget,
     QFileDialog, 
     QPushButton, 
     QVBoxLayout, 
     QLabel, 
     QHBoxLayout, 
     QInputDialog,
+    QMainWindow,
+    QScrollArea,
 )
 from PyQt6.QtCore import ( 
     Qt, 
@@ -16,51 +18,68 @@ from common import game_map
 from common.game_map import MapData, save_map_data
 from mapeditor.widgets.map_painter import ChipSetCanvas, MapTileCanvas, SharedImageCache
 
-class MapEditor(QWidget):
+
+class Main(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setGeometry(0, 0, 1280, 720)
+        self.setFixedSize(1280, 720)
+        self.setStyleSheet("background-color: #2E2E2E; color: white;")
+        self.setWindowTitle('マップエディタ')    
 
-        self.setWindowTitle('マップエディタ')
-        self.setGeometry(100, 100, 800, 600)
-
-        self.current_map: MapData = None
+        self.map_editor = MapEditor()
+        self.setCentralWidget(self.map_editor)
         self.init_ui()
 
     def init_ui(self):
-        layout = QVBoxLayout()
+        menu_bar = self.menuBar()
+        file_menu = menu_bar.addMenu('ファイル')
+        load_action = file_menu.addAction('マップを読み込む')
+        load_action.triggered.connect(self.map_editor.load_map)
+        self.show()
 
-        self.load_button = QPushButton('マップを読み込む')
-        self.load_button.clicked.connect(self.load_map)
+class MapEditor(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.current_map: MapData = None
+        self.setLayout(QVBoxLayout())
+        self.init_ui()
 
-        layout.addWidget(self.load_button)
-        self.setLayout(layout)
-        self.setWindowTitle('マップエディタ')
-        self.resize(300, 100)
+    def init_ui(self):
+        self.setGeometry(0, 0, 1280, 720)
+        self.setWindowTitle('マップエディタ')    
+        self.show()
+
 
     def editor_ui(self):
         if not self.current_map:
             print("マップが読み込まれていません。")
             return
 
-        self.setMinimumSize(800, 600)
-        self.setWindowTitle(f'マップエディタ - {self.current_map.name}')
-        self.resize(800, 600)        
+        # self.setWindowTitle(f'マップエディタ - {self.current_map.name}')     
         for i in reversed(range(self.layout().count())):
             widget = self.layout().itemAt(i).widget()
             if widget is not None:
                 widget.setParent(None)
-
         
-        layout = self.layout()  # 現在のレイアウトを取得
+        layout: QVBoxLayout = self.layout()  # 現在のレイアウトを取得
         info_label = QLabel(f"マップ名: {self.current_map.name}")
         layout.addWidget(info_label)
         size_label = QLabel(f"サイズ: {self.current_map.size_x} x {self.current_map.size_y}")
         layout.addWidget(size_label)
         alayout = QHBoxLayout()
-        canvas = MapTileCanvas(self.current_map)
-        alayout.addWidget(canvas)
+
         self.chipset = ChipSetCanvas(self.current_map.chipset)
         alayout.addWidget(self.chipset)
+        canvas = MapTileCanvas(self.current_map, self.chipset)
+
+        scrollable = QScrollArea()
+        scrollable.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # 水平スクロールバーを常に表示
+        scrollable.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # 垂直スクロールバーを常に表示
+        scrollable.setWidget(canvas)
+        scrollable.setWidgetResizable(True)  # スクロールエリアをリサイズ可能にする
+
+        alayout.addWidget(scrollable)
         layout.addLayout(alayout)
 
         resize_button = QPushButton('サイズ変更')
@@ -84,16 +103,7 @@ class MapEditor(QWidget):
         file_name, _ = QFileDialog.getOpenFileName(self, 'マップファイルを選択', 'resource/map', 'YAML Files (*.yaml *.yml)')
         
         if file_name:  # ファイルが選ばれたら
-            try:
-                self.current_map = game_map.load_map_data(file_name.split('/')[-1].split('.')[0])
-            except FileNotFoundError:
-                print('ファイルが見つかりません:', file_name)
-            except yaml.YAMLError as e:
-                print('YAML読み込みエラー:', e)
-            except game_map.InvalidMapDataError as e:
-                print('無効なマップデータ:', e)
-            except Exception as e:
-                print('読み込みエラー:', e)
+            self.current_map = game_map.load_map_data(file_name.split('/')[-1].split('.')[0])
             self.editor_ui()  # UIを更新
 
     
@@ -126,6 +136,6 @@ class MapEditor(QWidget):
 
 if __name__ == '__main__':
     app = QApplication([])
-    editor = MapEditor()
+    editor = Main()
     editor.show()
     app.exec()

@@ -15,7 +15,6 @@ class Observable:
         for observer in self.observers:
             observer.update(self, *args, **kwargs)
 
-class Observer(metaclass=ABCMeta):
-    @abstractmethod
+class Observer:
     def update(self, o: Observable, id, *args, **kwargs):
         pass

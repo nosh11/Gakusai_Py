@@ -3,8 +3,7 @@ import app_state
 from common.utils.file_manager import get_static_file_path
 from commons.view import View
 from commons.widget import UIWidget
-from common.consts.screen_settings import SCREEN_WIDTH, SCREEN_HEIGHT
-from . import *
+from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 from model.languages import get_lang_texts
 
 class Character:
@@ -135,7 +134,7 @@ class GameView(View):
         font = self.get_language().get_font(50)
         pause_menu_label = font.render("test", True, (255, 255, 255))
         self.set_text_label("pause_menu", 
-                             pause_menu_label)
+                            pause_menu_label)
 
     def setup(self):
         self.message_box = MessageBox(self.display_surface)

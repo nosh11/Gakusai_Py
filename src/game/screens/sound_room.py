@@ -3,7 +3,7 @@
 import random
 import pygame
 from common.utils.file_manager import get_static_file_path
-from commons.observe import Observable, Observer
+from game.interfaces.observe import Observable, Observer
 from commons.view import View
 from commons.widget import UIWidget
 from . import *

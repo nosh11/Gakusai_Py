@@ -1,5 +1,5 @@
-from commons.view_transition import SingleViewTransition, ViewTransition
-from commons.interfaces import ViewUpdater
+from game.commons.view_transition import SingleViewTransition, ViewTransition
+from game.interfaces.view_updater import ViewUpdater
 
 class ViewTransitionSingle(ViewUpdater):
     def __init__(self, transition: ViewTransition):

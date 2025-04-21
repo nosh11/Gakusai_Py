@@ -2,13 +2,13 @@ import pygame
 from app_controller import AppController
 import app_state
 from common.utils.file_manager import get_static_file_path
-from commons.interfaces import ViewUpdater
+from game.interfaces.view_updater import ViewUpdater
 from model.languages import Language
-from commons.view_transition import FadeTransition, SingleSlideTransition, RadialTransition, SlideTransition
+from game.commons.view_transition import FadeTransition, SingleSlideTransition, RadialTransition, SlideTransition
 from screens import *
 from consts import *
-from commons.view import View
-from commons.transition_controller import ViewTransitionSwitcher
+from game.commons.view import View
+from game.commons.transition_controller import ViewTransitionSwitcher
 
 # Initialize pygame
 pygame.init()

@@ -1,1 +1,1 @@
-from common.consts.screen_settings import *
+from game.consts.screen_settings import *

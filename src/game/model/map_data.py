@@ -1,6 +1,3 @@
-
-
-
 class Stage:
     def __init__(self, stage_id: int, name: str, pos: tuple[int, int]):
         self.pos = pos

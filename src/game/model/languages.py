@@ -12,10 +12,10 @@ class Language(Enum):
         self.id = id
         self.lang_id = lang_id
         self.displayname = name
-        self.__font = font
+        self.font = font
 
     def get_font(self, size=32) -> pygame.font.Font:
-        file_path = get_static_file_path(f"fonts/{self.__font}")
+        file_path = get_static_file_path(f"fonts/{self.font}")
         return pygame.font.Font(file_path, size)
     
     def get_display_name(self) -> str:

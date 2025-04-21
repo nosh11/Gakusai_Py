@@ -6,6 +6,13 @@
             "request": "launch",
             "program": "${workspaceFolder}/src/mapeditor/main.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Game",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/game/main.py",
+            "console": "integratedTerminal"
         }
     ]
 }

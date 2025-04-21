@@ -1,13 +1,9 @@
-
-# 画面転換処理用の抽象クラス
-
 from abc import ABCMeta, abstractmethod
 
 import pygame
 
-from commons.view import View
-from . import *
-from commons.interfaces import ViewUpdater
+from game.commons.view import View
+from game.interfaces.view_updater import ViewUpdater
 from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
 
@@ -48,7 +44,6 @@ class SingleViewTransition(ViewTransition, metaclass=ABCMeta):
     @abstractmethod
     def transition(self, progress: float):
         pass
-
 
 class View2ViewTransition(ViewTransition, metaclass=ABCMeta):
     def __init__(self, first_view: View, second_view: View, seconds: float):
