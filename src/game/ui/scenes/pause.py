@@ -1,8 +1,8 @@
 import pygame
-from commons.view import View
+from commons.view import Scene
 from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
-class PauseView(View):
+class PauseScene(Scene):
     def define_text_labels(self):
         self.font_console = self.get_language().get_font(10)
 

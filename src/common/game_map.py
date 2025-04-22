@@ -202,5 +202,5 @@ def save_map_data(map_data: MapData) -> None:
             'entities': [entity.__dict__ for entity in map_data.entities]
         }
 
-        yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=False)
+        yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=None)
         print(f"マップデータを保存しました: {file_path}")

@@ -66,7 +66,6 @@ class ChipSetCanvas(QWidget):
             self.update()  # 必要な時だけ再描画トリガー
 
     def paintEvent(self, _: QPaintEvent):
-        print("paintEvent called")
         if self.background_cache:
             painter = QPainter(self)
             # 背景をPixMapから描画

@@ -1,0 +1,1 @@
+from game.ui.scenes.game_scene.scene import GameScene

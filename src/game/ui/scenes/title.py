@@ -1,5 +1,5 @@
 import pygame
-from commons.view import View
+from commons.view import Scene
 from common.utils.file_manager import get_static_file_path
 from game.model.languages import Language
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
@@ -35,7 +35,7 @@ def make_credit_surface():
 
 
 
-class TitleView(View):
+class TitleScene(Scene):
     def define_text_labels(self):
         font = self.get_language().get_font(50)
 
@@ -88,7 +88,7 @@ class TitleView(View):
             elif pygame.key.get_pressed()[pygame.K_DOWN]:
                 self.current_choice = (self.current_choice + 1) % len(self.choices)
 
-class OptionView(View):
+class OptionScene(Scene):
     def define_text_labels(self):
         font = self.get_language().get_font(50)
 

@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 import pygame
 
-from game.commons.view import View
+from game.commons.view import Scene
 from game.interfaces.view_updater import ViewUpdater
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
@@ -37,7 +37,7 @@ class ViewTransition(ViewUpdater, metaclass=ABCMeta):
 
 
 class SingleViewTransition(ViewTransition, metaclass=ABCMeta):
-    def __init__(self, view: View, seconds: float):
+    def __init__(self, view: Scene, seconds: float):
         super().__init__(seconds)
         self.view = view
 
@@ -46,7 +46,7 @@ class SingleViewTransition(ViewTransition, metaclass=ABCMeta):
         pass
 
 class View2ViewTransition(ViewTransition, metaclass=ABCMeta):
-    def __init__(self, first_view: View, second_view: View, seconds: float):
+    def __init__(self, first_view: Scene, second_view: Scene, seconds: float):
         super().__init__(seconds)
         self.first_view = first_view
         self.second_view = second_view
@@ -69,7 +69,7 @@ class FadeTransition(SingleViewTransition):
 
 
 class SingleSlideTransition(SingleViewTransition):
-    def __init__(self, view: View, seconds: float, direction: int = 1):
+    def __init__(self, view: Scene, seconds: float, direction: int = 1):
         super().__init__(view, seconds)
         self.direction = direction
 
@@ -102,7 +102,7 @@ class SingleSlideTransition(SingleViewTransition):
 
 # 横からスライドするトランジション
 class SlideTransition(View2ViewTransition):
-    def __init__(self, first_view: View, second_view: View, seconds: float, direction: int = 1):
+    def __init__(self, first_view: Scene, second_view: Scene, seconds: float, direction: int = 1):
         super().__init__(first_view, second_view, seconds)
         self.direction = direction
 

@@ -7,7 +7,7 @@ from . import *
 from game.model.languages import Language, get_screen_texts
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
 
-class View(metaclass=ABCMeta):
+class Scene(metaclass=ABCMeta):
     def __init__(self, app_controller: AppController, language: Language, screen_id: str = None):
         self.display_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         self._app_controller = app_controller
@@ -85,7 +85,7 @@ class View(metaclass=ABCMeta):
 
 
 
-class ViewWithSprites(View):
+class ViewWithSprites(Scene):
     def __init__(self, app_controller: AppController, language: Language):
         super().__init__(app_controller, language)
 

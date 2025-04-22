@@ -1,6 +1,3 @@
-from abc import ABCMeta, abstractmethod
-
-
 class Observable:
     def __init__(self):
         self.observers: list[Observer] = []

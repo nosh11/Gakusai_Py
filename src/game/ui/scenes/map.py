@@ -1,9 +1,9 @@
 import pygame
-from commons.view import View
+from commons.view import Scene
 from model.map_data import MapData, Stage
 
 
-class MapView(View):
+class MapScene(Scene):
     def load_text(self):
         pass
 

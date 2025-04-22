@@ -4,7 +4,7 @@ import random
 import pygame
 from common.utils.file_manager import get_static_file_path
 from game.interfaces.observe import Observable, Observer
-from commons.view import View
+from commons.view import Scene
 from commons.widget import UIWidget
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
 from game.model.languages import get_lang_texts
@@ -44,7 +44,7 @@ BGMS = {
 }
 
 
-class SoundRoomView(View):
+class SoundRoomScene(Scene):
     def setup(self):
         self.bgm_frames = [[]]
         bgm_frame = None

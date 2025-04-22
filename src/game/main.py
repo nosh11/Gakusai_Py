@@ -5,9 +5,9 @@ from common.utils.file_manager import get_static_file_path
 from game.interfaces.view_updater import ViewUpdater
 from game.model.languages import Language
 from game.commons.view_transition import FadeTransition, SingleSlideTransition, RadialTransition, SlideTransition
-from game.screens import *
+from game.ui.scenes import *
 from game.consts import *
-from game.commons.view import View
+from game.commons.view import Scene
 from game.commons.transition_controller import ViewTransitionSwitcher
 
 def main():
@@ -21,12 +21,12 @@ def main():
     app_controller = AppController()
 
     views = {
-        "title": TitleView(app_controller, Language.Japanese, "title"),
-        "pause": PauseView(app_controller, Language.Japanese, "pause"),
-        "game": GameView(app_controller, Language.Japanese, "game"),
-        "sound_room": SoundRoomView(app_controller, Language.Japanese, "sound_room"),
-        "map": MapView(app_controller, Language.Japanese, "map"),
-        "options": OptionView(app_controller, Language.Japanese, "options"),
+        "title": TitleScene(app_controller, Language.Japanese, "title"),
+        "pause": PauseScene(app_controller, Language.Japanese, "pause"),
+        "game": GameScene(app_controller, Language.Japanese, "game"),
+        "sound_room": SoundRoomScene(app_controller, Language.Japanese, "sound_room"),
+        "map": MapScene(app_controller, Language.Japanese, "map"),
+        "options": OptionScene(app_controller, Language.Japanese, "options"),
     }
     pygame.mixer.music.load(get_static_file_path("bgm/Best_Beat.mp3"))
     pygame.mixer.music.play(-1)
@@ -36,13 +36,13 @@ def main():
             app_controller.quit()
             break
 
-        showing_view: View = views[stats.showing_view]
+        showing_view: Scene = views[stats.showing_view]
         showing_screen: str = stats.showing_view
         current_transition = stats.current_transition
 
         if stats.current_lang != showing_view.get_language():
             for _, view in views.items():
-                view: View
+                view: Scene
                 view.update_language(stats.current_lang)
 
         if current_transition is not None:

@@ -41,22 +41,3 @@ class User:
         except yaml.YAMLError as e:
             print(f"Error loading user data: {e}")
             return User()
-    
-if __name__ == "__main__":
-    user = User()
-    user.name = "John Doe"
-    user.level = 1
-    user.experience = 0
-    user.coins = 100
-    user.items = ["item1", "item2"]
-    user.achievements = ["achievement1"]
-    user.settings = {"setting1": True, "setting2": False}
-    
-    print(user)
-    
-    # Save the user data
-    user.save()
-    
-    # Load the user data
-    loaded_user = User.load()
-    print(loaded_user)

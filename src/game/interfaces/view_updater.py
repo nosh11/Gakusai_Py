@@ -1,6 +1,3 @@
-from abc import ABCMeta, abstractmethod
-
-class ViewUpdater(metaclass=ABCMeta):
-    @abstractmethod
+class ViewUpdater:
     def update(self) -> bool:
         pass
