@@ -8,7 +8,7 @@ class Stage:
 
 
 
-class MapData:
+class StageMap:
     def __init__(self):
         self.stages: list[Stage] = []
         self.current_stage: Stage = None

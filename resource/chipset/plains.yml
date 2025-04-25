@@ -1,25 +1,30 @@
-chipset_image: "chip1"
 chips:
-  - passable: true
-    id: 0
-    name: "grass"
-    size: [32, 32]
-    collision: false
-    durability: 0
-    layer: 0
-
-  - passable: true
-    id: 1
-    name: "grass_1"
-    size: [32, 32]
-    collision: false
-    durability: 0
-    layer: 0
-  
-  - passable: true
-    id: 5
-    name: "grass_1"
-    size: [32, 32]
-    collision: false
-    durability: 0
-    layer: 0
+- durability: 0
+  id: 0
+  layer: 0
+  passable: true
+- durability: 0
+  id: 1
+  layer: 0
+  passable: true
+- durability: 0
+  id: 5
+  layer: 0
+  passable: true
+- durability: -1
+  id: 51
+  layer: 0
+  passable: true
+- durability: -1
+  id: 70
+  layer: 0
+  passable: false
+- durability: -1
+  id: 103
+  layer: 0
+  passable: true
+- durability: -1
+  id: 2
+  layer: 0
+  passable: false
+chipset_image: chip1

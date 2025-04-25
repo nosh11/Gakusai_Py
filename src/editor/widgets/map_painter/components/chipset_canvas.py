@@ -17,7 +17,7 @@ from PyQt6.QtCore import (
 import PyQt6.QtGui
 
 from common.consts.screen_settings import CHIP_SIZE
-from common.game_map import ChipSet
+from common.models.game_map import ChipSet
 from mapeditor.widgets.map_painter.chip_cache import SharedImageCache
 
 class ChipSetCanvas(QWidget):

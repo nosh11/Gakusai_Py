@@ -69,6 +69,7 @@ entities:
 - entity_type: npc
   name: NPC
   position: [1, 1]
+init_pos: [11, 6]
 name: Map 1
 size_x: 75
 size_y: 16

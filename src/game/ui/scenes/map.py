@@ -1,6 +1,6 @@
 import pygame
 from commons.view import Scene
-from model.map_data import MapData, Stage
+from model.map_data import StageMap, Stage
 
 
 class MapScene(Scene):
@@ -10,7 +10,7 @@ class MapScene(Scene):
     def setup(self):
         self.display_surface.fill((100, 150, 30))
 
-        self.map_data = MapData()
+        self.map_data = StageMap()
         self.map_data.add_stage(Stage(0, "Test", (100, 100)))
         self.map_data.add_stage(Stage(1, "Test_2", (500, 600)))
         self.map_data.add_egde((0, 1))

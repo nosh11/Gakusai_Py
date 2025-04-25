@@ -72,6 +72,8 @@ class TitleScene(Scene):
         if pygame.event.get(pygame.KEYDOWN):
             if pygame.key.get_pressed()[pygame.K_RETURN]:
                 if self.current_choice == 0:
+                    self._app_controller.set_transition_seconds((0.2, 0.2))
+                    self._app_controller.set_transition_type("fade>fade")
                     self._app_controller.set_next_view("game")
                 elif self.current_choice == 1:
                     self._app_controller.set_next_view("continue")

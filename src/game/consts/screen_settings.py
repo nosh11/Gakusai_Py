@@ -2,3 +2,4 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 SCREEN_FPS = 60
 FULL_SCREEN = False # not implemented yet
+ZOOM = 2

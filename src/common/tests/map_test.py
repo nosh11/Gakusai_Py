@@ -1,5 +1,5 @@
 import pytest
-from common.game_map import load_map_data
+from common.models.game_map import load_map_data
 
 @pytest.mark.parametrize("map_name", ["test_map"])
 def test_load_map_data(map_name):

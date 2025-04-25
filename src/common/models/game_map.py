@@ -1,65 +1,27 @@
 __CHIPSIZE__ = 16  # チップのサイズ
 
+from common.models.map.chip_set import ChipSet, load_chipset
+from common.models.map.entity import Entity
 from common.utils.file_manager import get_static_file_path
 from common.utils import get_resource_file_path
 
-
-class Chip:
-    def __init__(self, id: int, passable: bool, durability: int, layer: int, **kwargs):
-        """
-        チップの基本情報を表現するクラス
-        :param passable: 通行可能かどうか
-        :param durability: 耐久値 (-1: イミュータブル, 0以上: 壊れるまでの攻撃回数)
-        :param layer: レイヤー (数値が高いほど上に表示)
-        """
-        self.id: int = id
-        self.passable = passable
-        self.durability = durability
-        self.layer = layer
-
-class ChipSet:
-    def __init__(self, chipset_id, chipset_image: str, chips: dict[int, Chip]):
-        """
-        チップセットを表現するクラス
-        :param chipset_image: チップセット画像のIDまたはパス
-        :param chips: チップのリスト
-        """
-        self.chipset_id = chipset_id
-        self.chipset_image = chipset_image
-        self.chips = chips
-    
-    @property
-    def chipset_image_path(self) -> str:
-        """
-        チップセット画像のパスを取得するプロパティ
-        :return: チップセット画像のパス
-        """
-        return get_static_file_path(f'chipset\\{self.chipset_image}.png')
-        
-
-class Entity:
-    def __init__(self, entity_type: str, name: str, position: list, **kwargs):
-        """
-        エンティティ (敵やオブジェクト) を表現するクラス
-        :param entity_type: エンティティの種類 (enemy, other)
-        :param name: エンティティの名前
-        :param init_x: 初期位置のX座標
-        :param init_y: 初期位置のY座標
-        """
-        self.entity_type = entity_type
-        self.name = name
-        self.position = position  # [x, y]のリスト形式で位置を保持
+# exception
+class InvalidMapDataError(Exception):
+    """無効なマップデータエラー"""
+    def __init__(self, message: str):
+        super().__init__(message)
 
 class MapData:
-    def __init__(self, map_id: str, path: str, name: str, chipset: ChipSet, size_x: int, size_y: int, chips_map: list[list[int]], entities: list[Entity]):
+    def __init__(self, map_id: str, path: str, name: str, chipset: ChipSet, size_x: int, size_y: int, chips_map: list[list[int]], entities: list[Entity], init_pos: list[float, float] = None, **kwargs):
         """
         マップデータを表現するクラス
         :param name: マップの名前
         :param chipset: 使用するチップセット
         :param size_x: マップの横幅
         :param size_y: マップの縦幅
-        :param chips_map: チップIDの2次元配列 (size_y × size_x)
+        :param chips_map: チップIDの2次元配列 (size_y, size_x)
         :param entities: マップ上のエンティティのリスト
+        :param init_pos
         """
         self.map_id = map_id
         self.path = path
@@ -67,8 +29,9 @@ class MapData:
         self.chipset = chipset
         self.size_x = size_x
         self.size_y = size_y
-        self.chips_map = chips_map
+        self.chips_map: list[int][int] = chips_map
         self.entities = entities
+        self.init_pos = init_pos if init_pos else [0.0, 0.0]
     
     def set_tile(self, x: int, y: int, chip_id: int) -> None:
         """
@@ -113,16 +76,6 @@ class MapData:
         self.size_x = new_x
         self.size_y = new_y
 
-
-# exception
-class InvalidMapDataError(Exception):
-    """無効なマップデータエラー"""
-    def __init__(self, message: str):
-        super().__init__(message)
-
-
-
-
 def load_map_data(map_id: str) -> MapData:
     """
     YAMLファイルからマップデータを読み込む関数
@@ -152,7 +105,8 @@ def load_map_data(map_id: str) -> MapData:
                 size_x=map_data_yaml['size_x'],
                 size_y=map_data_yaml['size_y'],
                 chips_map=map_data_yaml['chips_map'],
-                entities=entities
+                entities=entities,
+                init_pos=map_data_yaml.get('init_pos', [0.0, 0.0])
             )
         except KeyError as e:
             raise InvalidMapDataError(f"無効なマップデータ: {e}")
@@ -160,29 +114,6 @@ def load_map_data(map_id: str) -> MapData:
             raise InvalidMapDataError(f"マップデータの読み込み中にエラーが発生しました: {e}")
 
     return map_data
-
-def load_chipset(chipset_id: str) -> ChipSet:
-    """
-    チップセットを読み込む関数
-    :param chipset_id: 読み込むチップセットのID
-    :return: ChipSetオブジェクト
-    """
-    import yaml
-    file_path = get_resource_file_path(f'chipset\\{chipset_id}.yml')
-    print("file_path:", file_path)
-
-    with open(file_path, 'r', encoding='utf-8') as f:
-        chipset_yaml = yaml.safe_load(f)
-
-        # チップセットの読み込み
-        chipset = ChipSet(
-            chipset_id=chipset_id,
-            chipset_image=chipset_yaml['chipset_image'],
-            chips={chip['id']: Chip(**chip) for chip in chipset_yaml['chips']}
-        )
-
-    return chipset
-
 
 def save_map_data(map_data: MapData) -> None:
     """
@@ -199,7 +130,8 @@ def save_map_data(map_data: MapData) -> None:
             'size_x': map_data.size_x,
             'size_y': map_data.size_y,
             'chips_map': map_data.chips_map,
-            'entities': [entity.__dict__ for entity in map_data.entities]
+            'entities': [entity.__dict__ for entity in map_data.entities],
+            'init_pos': map_data.init_pos
         }
 
         yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=None)

@@ -1,10 +1,12 @@
 import pygame
+from common.models.game_map import load_map_data
 from game.app_state import AppStats as stats
 from common.utils.file_manager import get_static_file_path
 from commons.view import Scene
 from commons.widget import UIWidget
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 from game.interfaces.observe import Observable, Observer
+from game.ui.scenes.game_scene.components.map_field import MapField
 from game.ui.scenes.game_scene.components.message_box import MessageBox
 from model.languages import get_lang_texts
 from game.ui.scenes.game_scene.components.game_player import GamePlayer
@@ -23,20 +25,20 @@ class GameScene(Scene):
         self.skip_pressed = False
         self.skip = False
         self.skip_cd = SKIP_CD
-        self.player = GamePlayer(self.display_surface)
+        self.map_data = load_map_data("map1")
+        self.map_field = MapField(self.display_surface, self.map_data)
+        self.player = GamePlayer(self.map_field)
+        self.player.set_position(self.map_data.init_pos)
 
-        self.background_image = pygame.image.load(get_static_file_path("img/haikei.png"))
+        # self.background_image = pygame.image.load(get_static_file_path("img/haikei.png"))
+        
 
     def display(self):
-        self.display_surface.blit(self.background_image, (0, 0))
+        # self.display_surface.blit(self.background_image, (0, 0))
         self.message_box.update()
         self.message_box.draw()
+        self.map_field.draw()
         self.player.draw()
-
-        self.display_surface.blit(
-            self.get_text_label("pause_menu"),
-            (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 50)
-        )
 
     def tick(self):
         self.player.move()
@@ -82,11 +84,4 @@ class GameScene(Scene):
         self.message_box.next()
 
     def on_load(self):
-        bgm = "bgm/bgm_1.wav"
-        if stats.flags.get("bgm") != bgm:
-            pygame.mixer.music.load(get_static_file_path(bgm))
-            stats.flags["bgm"] = bgm
-            pygame.mixer.music.set_volume(0.5)
-            pygame.mixer.music.play(-1)
-        else:
-            pygame.mixer.music.unpause()
+        pygame.mixer.music.stop()
