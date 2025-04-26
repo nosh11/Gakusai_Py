@@ -2,7 +2,7 @@ from abc import abstractmethod, ABCMeta
 
 import pygame
 
-from app_controller import AppController
+from game.app_controller import AppController
 from . import *
 from game.model.languages import Language, get_screen_texts
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT

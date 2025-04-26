@@ -40,7 +40,7 @@ class ChipEditor(QWidget):
         scrollable.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # 垂直スクロールバーを常に表示
         scrollable.setWidget(chip_canvas)
         scrollable.setWidgetResizable(True)  # スクロールエリアをリサイズ可能にする
-        scrollable.setMaximumSize(300, 500)  # 最小サイズを設定
+        scrollable.setMaximumSize(500, 700)  # 最小サイズを設定
 
         layout.addWidget(scrollable)
 

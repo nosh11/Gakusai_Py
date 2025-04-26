@@ -1,12 +1,9 @@
-
-
-
+from math import floor
 import cv2
-import numpy as np
 import pygame
 from common.consts.screen_settings import CHIP_SIZE
 from common.models.game_map import ChipSet, MapData
-from game.consts.screen_settings import SCREEN_HEIGHT, SCREEN_WIDTH, ZOOM
+from game.consts.screen_settings import SCREEN_HEIGHT, SCREEN_WIDTH, ZOOM, ZOOMED_CHIP
 from game.model.languages import Language
 from game.ui.scenes.utils.image_manager import convert_opencv_img_to_pygame
 
@@ -36,45 +33,57 @@ def get_draw_range(topleft_pos, chip_size, screen_width, screen_height):
     :return: 描画範囲
     """
     return (
-        topleft_pos[0] // (chip_size * ZOOM),
-        topleft_pos[1] // (chip_size * ZOOM),
-        (topleft_pos[0] + screen_width + chip_size * ZOOM - 1) // (chip_size * ZOOM),
-        (topleft_pos[1] + screen_height + chip_size * ZOOM - 1) // (chip_size * ZOOM),
+        topleft_pos[0] // ZOOMED_CHIP, # 左上のX座標
+        topleft_pos[1] // ZOOMED_CHIP, # 左上のY座標
+        (topleft_pos[0] + screen_width + ZOOMED_CHIP - 1) // ZOOMED_CHIP, # 右下のX座標
+        (topleft_pos[1] + screen_height + ZOOMED_CHIP - 1) // ZOOMED_CHIP, # 右下のY座標
     )
 
 class MapField:
     def __init__(self, view_surface, map_data: MapData):
         self.view_surface = view_surface
         self.surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-        self.topleft_pos: list[float, float] = [0.0, 0.0]
         self.map_data = map_data
+        self.current_topleft = [0.0, 0.0]
         self.chip_image_cache = {}
         self.cached_map_surface = None
         self.needs_update = True
 
+        self.screen_size = (self.map_data.size_x * ZOOMED_CHIP, self.map_data.size_y * ZOOMED_CHIP)
+    
+    def update_topleft(self, topleft):
+        if (self.current_topleft != topleft):
+            self.needs_update = True
+            self.current_topleft = topleft
+
     def draw(self):
         if self.needs_update:
             self.update_map_surface()
-        self.view_surface.blit(self.cached_map_surface, (0, 0))
+        self.view_surface.blit(self.cached_map_surface, 
+                                (-ZOOMED_CHIP - self.current_topleft[0] % ZOOMED_CHIP, 
+                                -ZOOMED_CHIP - self.current_topleft[1] % ZOOMED_CHIP))
 
     def update_map_surface(self):
         """
         マップの描画を更新するメソッド
         """
-        # 描画範囲を取得
+        topleft = self.current_topleft
         draw_range = get_draw_range(
-            (int(self.topleft_pos[0]), int(self.topleft_pos[1])), CHIP_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT)
-        # マップのサイズを取得
-        map_width = self.map_data.size_x * CHIP_SIZE * ZOOM
-        map_height = self.map_data.size_y * CHIP_SIZE * ZOOM
+            (floor(topleft[0]), floor(topleft[1])), CHIP_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT)        
 
         # マップ全体を描画するSurfaceを作成
-        self.cached_map_surface = pygame.Surface((map_width, map_height))
+        self.cached_map_surface = pygame.Surface(self.screen_size)
 
         # チップを描画
-        for y in range(draw_range[1], draw_range[3]):
-            for x in range(draw_range[0], draw_range[2]):
+        for y in range(draw_range[1] - 1, draw_range[3] + 1):
+            if 0 <= y < self.map_data.size_y:
+                # チップの行を描画
+                self.cached_map_surface.fill((0, 0, 0, 0), (0, (y - draw_range[1]) * CHIP_SIZE * ZOOM, 
+                                                             self.screen_size[0], CHIP_SIZE * ZOOM))
+            else:
+                continue
+            # チップの列を描画
+            for x in range(draw_range[0] - 1, draw_range[2] + 1):
                 if 0 <= x < self.map_data.size_x and 0 <= y < self.map_data.size_y:
                     chip_id = self.map_data.get_tile(x, y)
                     if chip_id not in self.chip_image_cache:
@@ -88,7 +97,4 @@ class MapField:
                     
                     # チップを描画
                     self.cached_map_surface.blit(chip_image, (pos_x, pos_y))
-
-        # スクリーンに合わせてマップ全体を描画するSurfaceを作成
-        # self.cached_map_surface = pygame.transform.scale(self.cached_map_surface, (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.needs_update = False

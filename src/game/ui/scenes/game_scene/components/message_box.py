@@ -11,9 +11,6 @@ WIDTH_PADDING = 0.025
 
 class MessageSenderLabel:
     def __init__(self, sender):
-        """
-        senderは、sender.nameとsender.fontを持つことを前提とします
-        """
         self.sender = sender
         self.surface = None
 

@@ -29,6 +29,7 @@ class MapData:
         self.chipset = chipset
         self.size_x = size_x
         self.size_y = size_y
+        self.size = (size_x, size_y)
         self.chips_map: list[int][int] = chips_map
         self.entities = entities
         self.init_pos = init_pos if init_pos else [0.0, 0.0]

@@ -27,10 +27,8 @@ class GameScene(Scene):
         self.skip_cd = SKIP_CD
         self.map_data = load_map_data("map1")
         self.map_field = MapField(self.display_surface, self.map_data)
-        self.player = GamePlayer(self.map_field)
+        self.player = GamePlayer(self.display_surface, self.map_field)
         self.player.set_position(self.map_data.init_pos)
-
-        # self.background_image = pygame.image.load(get_static_file_path("img/haikei.png"))
         
 
     def display(self):
@@ -42,6 +40,7 @@ class GameScene(Scene):
 
     def tick(self):
         self.player.move()
+
         if pygame.event.get(pygame.KEYDOWN):
             if pygame.key.get_pressed()[pygame.K_SPACE]:
                 self.space_key_pressed()

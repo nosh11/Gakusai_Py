@@ -1,5 +1,11 @@
+from common.consts.screen_settings import CHIP_SIZE
+
+
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 SCREEN_FPS = 60
 FULL_SCREEN = False # not implemented yet
-ZOOM = 2
+ZOOM = 3
+
+ZOOMED_CHIP = ZOOM * CHIP_SIZE
