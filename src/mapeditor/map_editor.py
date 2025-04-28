@@ -14,8 +14,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import ( 
     Qt, 
 )
-from common.models import game_map
 from common.models.game_map import MapData, save_map_data
+from common.utils.file_manager import get_resource_file_path
 from mapeditor.widgets.map_painter import ChipSetCanvas, MapTileCanvas, SharedImageCache
 
 class MapEditor(QWidget):
@@ -75,7 +75,7 @@ class MapEditor(QWidget):
         # 保存処理をここに実装
         if self.current_map:
             # YAMLファイルに保存する処理を実装
-            file_name = self.current_map.path
+            file_name = get_resource_file_path(f'map\\{self.current_map.name}.yaml')
             if file_name:
                 save_map_data(self.current_map)
                 print(f'マップが保存されました: {file_name}')

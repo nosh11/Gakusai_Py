@@ -1,12 +1,28 @@
-class Entity:
-    def __init__(self, entity_type: str, name: str, position: list, **kwargs):
-        """
-        エンティティ (敵やオブジェクト) を表現するクラス
-        :param entity_type: エンティティの種類 (enemy, other)
-        :param name: エンティティの名前
-        :param init_x: 初期位置のX座標
-        :param init_y: 初期位置のY座標
-        """
-        self.entity_type = entity_type
-        self.name = name
-        self.position = position  # [x, y]のリスト形式で位置を保持
+from dataclasses import dataclass, asdict, field
+import yaml
+from common.utils.yaml_factory import make_constructor, make_representer
+
+class CEntityMeta(type):
+    registry = {}
+
+    def __new__(mcs, name, bases, attrs):
+        cls = super().__new__(mcs, name, bases, attrs)
+        if name != "CEntity":
+            tag = f"!{name}"
+            CEntityMeta.registry[name.lower()] = cls
+            yaml.add_representer(cls, make_representer(tag))
+            yaml.add_constructor(tag, make_constructor(cls))
+        return cls
+
+@dataclass
+class CEntity(metaclass=CEntityMeta):
+    name: str = "unnamed entity"
+    position: list[float, float] = field(default_factory=lambda: [0.0, 0.0])
+
+@dataclass
+class LivingCEntity(CEntity):
+    max_health: int = 10
+
+@dataclass
+class ImageEntity(CEntity):
+    image_id: str = "none"

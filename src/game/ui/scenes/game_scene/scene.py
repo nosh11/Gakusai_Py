@@ -1,14 +1,8 @@
 import pygame
 from common.models.game_map import load_map_data
-from game.app_state import AppStats as stats
-from common.utils.file_manager import get_static_file_path
 from commons.view import Scene
-from commons.widget import UIWidget
-from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
-from game.interfaces.observe import Observable, Observer
 from game.ui.scenes.game_scene.components.map_field import MapField
 from game.ui.scenes.game_scene.components.message_box import MessageBox
-from model.languages import get_lang_texts
 from game.ui.scenes.game_scene.components.game_player import GamePlayer
 
 SKIP_CD = 10
@@ -27,6 +21,7 @@ class GameScene(Scene):
         self.skip_cd = SKIP_CD
         self.map_data = load_map_data("map1")
         self.map_field = MapField(self.display_surface, self.map_data)
+        self.map_field.reset_map_surface()
         self.player = GamePlayer(self.display_surface, self.map_field)
         self.player.set_position(self.map_data.init_pos)
         

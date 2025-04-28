@@ -1,0 +1,13 @@
+chips:
+  1:
+    durability: -1
+    id: 1
+    layer: 0
+    passable: true
+  2:
+    durability: -1
+    id: 2
+    layer: 0
+    passable: true
+chipset_id: test_chipset
+chipset_image: chip1

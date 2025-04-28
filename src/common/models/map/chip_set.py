@@ -1,17 +1,32 @@
+from dataclasses import dataclass, field
+
+import yaml
 from common.models.map.chip import Chip
 from common.utils.file_manager import get_resource_file_path, get_static_file_path
 
-
+@dataclass
 class ChipSet:
-    def __init__(self, chipset_id, chipset_image: str, chips: dict[int, Chip]):
-        """
-        チップセットを表現するクラス
-        :param chipset_image: チップセット画像のIDまたはパス
-        :param chips: チップのリスト
-        """
-        self.chipset_id = chipset_id
-        self.chipset_image_id = chipset_image
-        self.chips = chips
+    chipset_id: str
+    chipset_image: str
+    chips: dict[int, Chip] = field(default_factory=dict)
+
+    def __post_init__(self):
+        # チップセット画像のパスを取得
+        self.chipset_image_path = get_static_file_path(f'chipset\\{self.chipset_image}.png')
+
+    def to_dict(self):
+        return {
+            'chipset_id': self.chipset_id,
+            'chipset_image': self.chipset_image,
+            'chips': {chip_id: chip.to_dict() for chip_id, chip in self.chips.items()}
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        chipset_id = data['chipset_id']
+        chipset_image = data['chipset_image']
+        chips = {int(chip_id): Chip.from_dict(chip) for chip_id, chip in data['chips'].items()}
+        return cls(chipset_id, chipset_image, chips)
 
     def load_chip(self, chip_id: int) -> Chip:
         # 存在しない -> 新規作成
@@ -19,50 +34,48 @@ class ChipSet:
             chip = Chip(chip_id, True, -1, 0)
             self.chips[chip_id] = chip
         return self.chips[chip_id]
-
     
-    @property
-    def chipset_image_path(self) -> str:
-        """
-        チップセット画像のパスを取得するプロパティ
-        :return: チップセット画像のパス
-        """
-        return get_static_file_path(f'chipset\\{self.chipset_image_id}.png')
+from common.utils.yaml_factory import make_constructor, make_representer
+# YAMLのシリアライズとデシリアライズのための関数を登録
+yaml.add_representer(ChipSet, make_representer('!ChipSet'))
+yaml.add_constructor('!ChipSet', make_constructor(ChipSet))
 
 def load_chipset(chipset_id: str) -> ChipSet:
     """
-    チップセットを読み込む関数
-    :param chipset_id: 読み込むチップセットのID
+    チップセットデータをYAMLファイルから読み込む関数
+    :param chipset_id: チップセットのID
     :return: ChipSetオブジェクト
     """
-    import yaml
-    file_path = get_resource_file_path(f'chipset\\{chipset_id}.yml')
-    print("file_path:", file_path)
-
-    with open(file_path, 'r', encoding='utf-8') as f:
-        chipset_yaml = yaml.safe_load(f)
-
-        # チップセットの読み込み
-        chipset = ChipSet(
-            chipset_id=chipset_id,
-            chipset_image=chipset_yaml['chipset_image'],
-            chips={chip['id']: Chip(**chip) for chip in chipset_yaml['chips']}
-        )
-
-    return chipset
-
+    file_path = get_resource_file_path(f'chipset\\{chipset_id}.yaml')
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = yaml.safe_load(file)
+        return ChipSet.from_dict(data)
 
 def save_chipset(chipset: ChipSet) -> None:
     """
-    チップセットをYAMLファイルに保存する関数
-    :param chipset: 保存するチップセット
-    :param file_path: 保存先のファイルパス
+    チップセットデータをYAMLファイルに保存する関数
+    :param chipset: 保存するChipSetオブジェクト
     """
-    import yaml
-    file_path = get_resource_file_path(f'chipset\\{chipset.chipset_id}.yml')
+    file_path = get_resource_file_path(f'chipset\\{chipset.chipset_id}.yaml')
+    with open(file_path, 'w', encoding='utf-8') as file:
+        data = chipset.to_dict()
+        yaml.dump(data, file, default_flow_style=False, allow_unicode=True)
 
-    with open(file_path, 'w', encoding='utf-8') as f:
-        yaml.dump({
-            'chipset_image': chipset.chipset_image_id,
-            'chips': [chip.__dict__ for chip in chipset.chips.values()]
-        }, f, allow_unicode=True)
+
+if __name__ == "__main__":
+    # テスト用のチップセットデータを作成
+    chipset = ChipSet(
+        chipset_id="test_chipset",
+        chipset_image="chip1",
+        chips={}
+    )
+    # チップを追加
+    chipset.load_chip(1)
+    chipset.load_chip(2)
+
+    # YAMLファイルに保存
+    save_chipset(chipset)
+
+    # YAMLファイルから読み込み
+    loaded_chipset = load_chipset("test_chipset")
+    print(loaded_chipset)

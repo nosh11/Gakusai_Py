@@ -1,24 +1,15 @@
-import PyQt6, yaml
+import PyQt6
 from PyQt6.QtWidgets import (
-    QApplication, 
     QWidget,
-    QFileDialog, 
-    QPushButton, 
     QVBoxLayout, 
-    QLabel, 
-    QHBoxLayout, 
-    QInputDialog,
-    QMainWindow,
     QScrollArea,
 )
 from PyQt6.QtCore import ( 
     Qt, 
 )
-from common.models import game_map
-from common.models.game_map import MapData, save_map_data
 from common.models.map.chip_set import ChipSet, save_chipset
 from mapeditor.widgets.chip_editor_ui import ChipEditorUi
-from mapeditor.widgets.map_painter import ChipSetCanvas, MapTileCanvas, SharedImageCache
+from mapeditor.widgets.map_painter import ChipSetCanvas
 
 class ChipEditor(QWidget):
     def __init__(self, chipset: ChipSet):

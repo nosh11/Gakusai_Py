@@ -29,8 +29,6 @@ class MapTileCanvas(QScrollArea):
         self.update_needed_tiles = set()
         self.background_cache = None  # 背景用キャッシュPixMapを追加
         self.setWidgetResizable(True)  # スクロールエリアのサイズを自動調整
-        self.setMinimumSize(self.map_data.size_x * CHIP_SIZE * self.zoom, self.map_data.size_y * CHIP_SIZE * self.zoom)
-        self.setMaximumSize(self.map_data.size_x * CHIP_SIZE * self.zoom, self.map_data.size_y * CHIP_SIZE * self.zoom)
         self.build_background_cache()  # 初回キャッシュ作成
 
     def build_background_cache(self):
@@ -42,12 +40,12 @@ class MapTileCanvas(QScrollArea):
 
         painter = QPainter(self.background_cache)
         start_x = max(0, self.viewport_rect.left() // tile_size)
-        end_x = min(self.map_data.size_x, (self.viewport_rect.right() + tile_size - 1) // tile_size)
+        end_x = min(self.map_data.size[0], (self.viewport_rect.right() + tile_size - 1) // tile_size)
         start_y = max(0, self.viewport_rect.top() // tile_size)
-        end_y = min(self.map_data.size_y, (self.viewport_rect.bottom() + tile_size - 1) // tile_size)
+        end_y = min(self.map_data.size[1], (self.viewport_rect.bottom() + tile_size - 1) // tile_size)
         for x in range(start_x, end_x):
             for y in range(start_y, end_y):
-                tile = self.map_data.get_tile(x, y)
+                tile = self.map_data.get_tile((x, y))
                 image = SharedImageCache.get_image(self.map_data.chipset, tile)
                 if image:
                     scaled_image = image.scaled(tile_size, tile_size, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
@@ -109,8 +107,8 @@ class MapTileCanvas(QScrollArea):
         x = pos.x() // (CHIP_SIZE * self.zoom)
         y = pos.y() // (CHIP_SIZE * self.zoom)
         selected_chip_id = self.chipset_canvas.selected_chip_id
-        if 0 <= x < self.map_data.size_x and 0 <= y < self.map_data.size_y:
-            self.map_data.set_tile(x, y, selected_chip_id)
+        if self.map_data.is_within((x, y)):
+            self.map_data.set_tile((x, y), selected_chip_id)
             self.update_needed_tiles.add((x, y))
             self.build_background_cache()  # 背景キャッシュを更新
             self.update()  # 必要な時だけ再描画トリガー

@@ -7,7 +7,7 @@ from game.ui.scenes.game_scene.components.map_field import MapField
 class Bullet:
     def __init__(self, x, y, velocity: Vector2):
         self.pos = Vector2(x, y)
-        self.velocity = velocity  # chips/tick
+        self.velocity = velocity
         self.surface = pygame.Surface((10, 10))
         self.surface.fill((255, 0, 0))
 
@@ -31,14 +31,14 @@ class GamePlayer:
         img = pygame.image.load(get_static_file_path("character/down/0.png"))
         img = pygame.transform.scale(img, (int(img.get_width() * ZOOM / 2), int(img.get_height() * ZOOM / 2)))
         self.surface = img.convert_alpha()
-        self.offset = Vector2(-1.5, -2.5)
+        self.offset = Vector2(0, 0)
         self.bullets: list[Bullet] = []
 
     def is_in_wall(self, x: int, y: int) -> bool:
         map_data = self.map_field.map_data
-        if x < 0 or y < 0 or x >= map_data.size_x - 1 or y >= map_data.size_y - 1:
+        if x < 0 or y < 0 or x >= map_data.size[0] - 1 or y >= map_data.size[1] - 1:
             return True
-        chip_id = map_data.get_tile(x, y)
+        chip_id = map_data.get_tile((x, y))
         chip = map_data.chipset.load_chip(chip_id)
         return chip is not None and not chip.passable
 
@@ -72,6 +72,7 @@ class GamePlayer:
 
     def set_position(self, position):
         self.pos = Vector2(position)
+        # sself.update_map_field_topleft()
 
     def shoot_bullet(self):
         target_pos = Vector2(pygame.mouse.get_pos())

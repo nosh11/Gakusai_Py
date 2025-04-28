@@ -1,70 +1,64 @@
 __CHIPSIZE__ = 16  # チップのサイズ
 
-from common.models.map.chip_set import ChipSet, load_chipset
-from common.models.map.entity import Entity
-from common.utils.file_manager import get_static_file_path
-from common.utils import get_resource_file_path
+from dataclasses import dataclass, field
+from typing import List
 
-# exception
+import yaml
+from common.models.map.chip_set import ChipSet, load_chipset
+from common.models.map.entity import CEntity
+from common.utils import get_resource_file_path
+from common.utils.yaml_factory import make_constructor, make_representer
+
 class InvalidMapDataError(Exception):
-    """無効なマップデータエラー"""
     def __init__(self, message: str):
         super().__init__(message)
 
+@dataclass
 class MapData:
-    def __init__(self, map_id: str, path: str, name: str, chipset: ChipSet, size_x: int, size_y: int, chips_map: list[list[int]], entities: list[Entity], init_pos: list[float, float] = None, **kwargs):
-        """
-        マップデータを表現するクラス
-        :param name: マップの名前
-        :param chipset: 使用するチップセット
-        :param size_x: マップの横幅
-        :param size_y: マップの縦幅
-        :param chips_map: チップIDの2次元配列 (size_y, size_x)
-        :param entities: マップ上のエンティティのリスト
-        :param init_pos
-        """
-        self.map_id = map_id
-        self.path = path
-        self.name = name
-        self.chipset = chipset
-        self.size_x = size_x
-        self.size_y = size_y
-        self.size = (size_x, size_y)
-        self.chips_map: list[int][int] = chips_map
-        self.entities = entities
-        self.init_pos = init_pos if init_pos else [0.0, 0.0]
-    
-    def set_tile(self, x: int, y: int, chip_id: int) -> None:
-        """
-        指定した座標にチップをセットするメソッド
-        :param x: X座標
-        :param y: Y座標
-        :param chip_id: セットするチップのID
-        """
-        if 0 <= x < self.size_x and 0 <= y < self.size_y:
-            self.chips_map[y][x] = chip_id
-        else:
-            raise IndexError("指定された座標がマップの範囲外です。")
+    map_id: str
+    chipset: ChipSet
+    entities: List[CEntity] = field(default_factory=list)
+    name: str = "Unnamed Map"
+    size: tuple[int, int] = field(default_factory=lambda: (10, 10))
+    chips_map: List[List[int]] = field(default_factory=lambda: [[0 for _ in range(10)] for _ in range(10)])
+    init_pos: tuple[int, int] = field(default_factory=lambda: (0, 0))
 
-    def get_tile(self, x: int, y: int) -> int:
-        """
-        指定した座標のチップを取得するメソッド
-        :param x: X座標
-        :param y: Y座標
-        :return: 指定した座標のチップ
-        """
-        if 0 <= x < self.size_x and 0 <= y < self.size_y:
-            chip_id = self.chips_map[y][x]
-            return chip_id
-        else:
-            raise IndexError("指定された座標がマップの範囲外です。")
+    def to_dict(self):
+        data = {
+            'map_id': self.map_id,
+            'chipset_id': self.chipset.chipset_id,
+            'entities': [entity.to_dict() for entity in self.entities],
+            'name': self.name,
+            'size': list(self.size),
+            'chips_map': self.chips_map,
+            'init_pos': list(self.init_pos)
+        }
+        return data
+
+    @classmethod
+    def from_dict(cls, data):
+        data['chipset'] = load_chipset(data['chipset_id'])
+        del data['chipset_id']
+        data['entities'] = [CEntity(**entity) for entity in data.get('entities', [])]
+        data['size'] = tuple(data.get('size', (10, 10)))
+        data['init_pos'] = tuple(data.get('init_pos', (0, 0)))
+        return cls(**data)
+
+    def is_within(self, pos: tuple[int, int]):
+        return all(0 <= pos[i] < self.size[i] for i in range(2))
+
+    def set_tile(self, pos: tuple[int, int], chip_id: int) -> bool:
+        if self.is_within(pos):
+            self.chips_map[pos[1]][pos[0]] = chip_id
+            return True
+        return False
+
+    def get_tile(self, pos: tuple[int, int]) -> int | None:
+        if self.is_within(pos):
+            return self.chips_map[pos[1]][pos[0]]
+        return None
         
     def resize(self, new_x, new_y):
-        """
-        マップのサイズを変更するメソッド
-        :param new_x: 新しいX座標
-        :param new_y: 新しいY座標
-        """
         if new_x > self.size_x or new_y > self.size_y:
             # サイズを拡大する場合
             for y in range(self.size_y):
@@ -73,47 +67,42 @@ class MapData:
         else:
             # サイズを縮小する場合
             self.chips_map = [row[:new_x] for row in self.chips_map[:new_y]]
-
         self.size_x = new_x
         self.size_y = new_y
+
+    # deprecated
+    @property
+    def size_x(self) -> int:
+        return self.size[0]
+    
+    @property
+    def size_y(self) -> int:
+        return self.size[1]
+    
+    @size_x.setter
+    def size_x(self, value: int) -> None:
+        self.size = (value, self.size[1])
+
+    @size_y.setter
+    def size_y(self, value: int) -> None:
+        self.size = (self.size[0], value)
+    
+
+yaml.add_representer(MapData, make_representer("!MapData"))
+yaml.add_constructor("!MapData", make_constructor(MapData))
 
 def load_map_data(map_id: str) -> MapData:
     """
     YAMLファイルからマップデータを読み込む関数
-    :param file_path: 読み込むYAMLファイルのパス
+    :param map_id: 読み込むマップのID
     :return: MapDataオブジェクト
     """
-    import yaml
-    file_path = get_resource_file_path(f'map\\{map_id}.yml')
+    file_path = get_resource_file_path(f'map\\{map_id}.yaml')
 
     with open(file_path, 'r', encoding='utf-8') as f:
-        map_data_yaml = yaml.safe_load(f)
-
-
-        try:
-            # チップセットの読み込み
-            chipset = load_chipset(map_data_yaml['chipset'])
-
-            # エンティティの読み込み
-            entities = [Entity(**entity) for entity in map_data_yaml['entities']]
-
-            # マップデータの読み込み
-            map_data = MapData(
-                map_id=map_id,
-                path=file_path,
-                name=map_data_yaml['name'],
-                chipset=chipset,
-                size_x=map_data_yaml['size_x'],
-                size_y=map_data_yaml['size_y'],
-                chips_map=map_data_yaml['chips_map'],
-                entities=entities,
-                init_pos=map_data_yaml.get('init_pos', [0.0, 0.0])
-            )
-        except KeyError as e:
-            raise InvalidMapDataError(f"無効なマップデータ: {e}")
-        except Exception as e:
-            raise InvalidMapDataError(f"マップデータの読み込み中にエラーが発生しました: {e}")
-
+        map_data: MapData = yaml.load(f, Loader=yaml.FullLoader)
+        if not isinstance(map_data, MapData):
+            raise InvalidMapDataError(f"Invalid map data format for {map_id}. Expected MapData object.")
     return map_data
 
 def save_map_data(map_data: MapData) -> None:
@@ -121,19 +110,7 @@ def save_map_data(map_data: MapData) -> None:
     マップデータをYAMLファイルに保存する関数
     :param map_data: 保存するMapDataオブジェクト
     """
-    import yaml
-    file_path = map_data.path
+    file_path = get_resource_file_path(f'map\\{map_data.map_id}.yaml')
 
     with open(file_path, 'w', encoding='utf-8') as f:
-        yaml_data = {
-            'name': map_data.name,
-            'chipset': map_data.chipset.chipset_id,
-            'size_x': map_data.size_x,
-            'size_y': map_data.size_y,
-            'chips_map': map_data.chips_map,
-            'entities': [entity.__dict__ for entity in map_data.entities],
-            'init_pos': map_data.init_pos
-        }
-
-        yaml.dump(yaml_data, f, allow_unicode=True, default_flow_style=None)
-        print(f"マップデータを保存しました: {file_path}")
+        yaml.dump(map_data, f, default_flow_style=None, allow_unicode=True)  # allow_unicode=Trueで日本語を扱えるようにする

@@ -1,0 +1,28 @@
+chips:
+  0:
+    durability: 0
+    id: 0
+    layer: 0
+    passable: true
+  1:
+    durability: 0
+    id: 1
+    layer: 0
+    passable: true
+  2:
+    durability: -1
+    id: 2
+    layer: 0
+    passable: false
+  4:
+    durability: -1
+    id: 4
+    layer: 0
+    passable: false
+  5:
+    durability: 0
+    id: 5
+    layer: 0
+    passable: false
+chipset_id: plains
+chipset_image: chip1
