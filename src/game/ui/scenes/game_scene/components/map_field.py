@@ -13,7 +13,6 @@ def get_chip_image(chipset_image, chip_id: int):
     chip_image = chipset_image[y:y + CHIP_SIZE, x:x + CHIP_SIZE]
     chip_image = cv2.resize(chip_image, (CHIP_SIZE * ZOOM, CHIP_SIZE * ZOOM), interpolation=cv2.INTER_NEAREST)
     return convert_opencv_img_to_pygame(chip_image)
-
 class MapField:
     def __init__(self, view_surface, map_data: MapData):
         self.view_surface = view_surface # 描画するSurface
@@ -83,7 +82,6 @@ class MapField:
             chip_image = self.chip_image_cache[chip_id]
         self.surface.blit(chip_image, ((pos[0]-(topleft[0] // ZOOMED_CHIP))*ZOOMED_CHIP, (pos[1]-(topleft[1] // ZOOMED_CHIP))*ZOOMED_CHIP))
 
-    # 全体を改めて描画する場合、Surfaceを作り直す
     def reset_map_surface(self):
         chipset_image = cv2.imread(self.map_data.chipset.chipset_image_path, cv2.IMREAD_UNCHANGED)
         tl = [self.current_topleft[i] / ZOOMED_CHIP for i in range(2)]
