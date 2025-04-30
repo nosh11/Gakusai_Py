@@ -1,7 +1,7 @@
 import pygame
 
 from common.models.talk.message import Message
-from common.utils.file_manager import get_static_file_path
+from common.utils.file_manager import get_asset_file_path
 from game.commons.widget import UIWidget
 from game.consts.screen_settings import SCREEN_HEIGHT, SCREEN_WIDTH
 from game.ui.scenes.components.text_line import MessageSingleLine

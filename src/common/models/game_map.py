@@ -22,6 +22,7 @@ class MapData:
     size: tuple[int, int] = field(default_factory=lambda: (10, 10))
     chips_map: List[List[int]] = field(default_factory=lambda: [[0 for _ in range(10)] for _ in range(10)])
     init_pos: tuple[int, int] = field(default_factory=lambda: (0, 0))
+    background_image_path: str | None = None
 
     def to_dict(self):
         data = {
@@ -31,7 +32,8 @@ class MapData:
             'name': self.name,
             'size': list(self.size),
             'chips_map': self.chips_map,
-            'init_pos': list(self.init_pos)
+            'init_pos': list(self.init_pos),
+            'background_image_path': self.background_image_path,
         }
         return data
 
@@ -42,6 +44,7 @@ class MapData:
         data['entities'] = [CEntity(**entity) for entity in data.get('entities', [])]
         data['size'] = tuple(data.get('size', (10, 10)))
         data['init_pos'] = tuple(data.get('init_pos', (0, 0)))
+        data['background_image_path'] = data.get('background_image_path', None)
         return cls(**data)
 
     def is_within(self, pos: tuple[int, int]):

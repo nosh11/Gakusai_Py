@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 import yaml
 from common.models.map.chip import Chip
-from common.utils.file_manager import get_resource_file_path, get_static_file_path
+from common.utils.file_manager import get_resource_file_path, get_asset_file_path
 
 @dataclass
 class ChipSet:
@@ -12,7 +12,7 @@ class ChipSet:
 
     def __post_init__(self):
         # チップセット画像のパスを取得
-        self.chipset_image_path = get_static_file_path(f'chipset\\{self.chipset_image}.png')
+        self.chipset_image_path = get_asset_file_path(f'chipset\\{self.chipset_image}.png')
 
     def to_dict(self):
         return {

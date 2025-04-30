@@ -28,21 +28,29 @@ class MapEditor(QWidget):
     def init_ui(self):
         self.setGeometry(0, 0, 1280, 720)
         self.setWindowTitle('マップエディタ')    
-        # self.setWindowTitle(f'マップエディタ - {self.current_map.name}')     
-        for i in reversed(range(self.layout().count())):
-            widget = self.layout().itemAt(i).widget()
-            if widget is not None:
-                widget.setParent(None)
-        
+        # layout is not set in the constructor, so we need to create it here
+        # ルートレイアウトを作成し、QVBoxLayoutを設定
         layout: QVBoxLayout = self.layout()  # 現在のレイアウトを取得
-        info_label = QLabel(f"マップ名: {self.current_map.name}")
-        layout.addWidget(info_label)
-        size_label = QLabel(f"サイズ: {self.current_map.size_x} x {self.current_map.size_y}")
-        layout.addWidget(size_label)
-        alayout = QHBoxLayout()
+        if layout is None:
+            layout = QVBoxLayout()
+            self.setLayout(layout)
+        else:
+            for i in reversed(range(self.layout().count())):
+                widget = self.layout().itemAt(i).widget()
+                if widget is not None:
+                    widget.setParent(None)
+
+        info_labels_layout = QVBoxLayout()
+        painting_layout = QHBoxLayout()
+
+        layout.addLayout(info_labels_layout)
+        layout.addLayout(painting_layout)
+
+        info_labels_layout.addWidget(QLabel(f"マップ名: {self.current_map.name} ({self.current_map.map_id})"))
+        info_labels_layout.addWidget(QLabel(f"チップセット: {self.current_map.chipset.chipset_id}"))
+        info_labels_layout.addWidget(QLabel(f"サイズ: {self.current_map.size_x} x {self.current_map.size_y}"))
 
         self.chipset = ChipSetCanvas(self.current_map.chipset)
-        alayout.addWidget(self.chipset)
         canvas = MapTileCanvas(self.current_map, self.chipset)
 
         scrollable = QScrollArea()
@@ -51,8 +59,15 @@ class MapEditor(QWidget):
         scrollable.setWidget(canvas)
         scrollable.setWidgetResizable(True)  # スクロールエリアをリサイズ可能にする
 
-        alayout.addWidget(scrollable)
-        layout.addLayout(alayout)
+        scrollable_2 = QScrollArea()
+        scrollable_2.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # 水平スクロールバーを常に表示
+        scrollable_2.setWidget(self.chipset)
+        scrollable_2.setWidgetResizable(True)
+
+        # Add the scroll areas to the painting layout with stretch factors for a 7:3 ratio.
+        # scrollable (canvas) gets a stretch of 7 (70%) and scrollable_2 (chipset) gets a stretch of 3 (30%).
+        painting_layout.addWidget(scrollable_2, 3)
+        painting_layout.addWidget(scrollable, 7)
 
         resize_button = QPushButton('サイズ変更')
         # 利サイズ用のダイアログを開く
@@ -65,8 +80,21 @@ class MapEditor(QWidget):
                 print(f"マップのサイズを変更しました: {new_x} x {new_y}")
             else:
                 print("サイズ変更がキャンセルされました。")
+        
+        background_button = QPushButton('背景画像設定')
+        # 背景画像用のダイアログを開く
+        def set_background_image():
+            file_name, _ = QFileDialog.getOpenFileName(self, '背景画像選択', '', 'Images (*.png *.jpg *.bmp)')
+            if file_name:
+                self.current_map.background_image_path = file_name
+                print(f"背景画像を設定しました: {file_name}")
+            else:
+                print("背景画像の選択がキャンセルされました。")
+        background_button.clicked.connect(set_background_image)
+        info_labels_layout.addWidget(background_button)
+
         resize_button.clicked.connect(resize_map)
-        layout.addWidget(resize_button)
+        info_labels_layout.addWidget(resize_button)
 
         self.setLayout(layout)
         self.show()

@@ -2,26 +2,20 @@ from math import ceil, floor
 import cv2
 import pygame
 from common.consts.screen_settings import CHIP_SIZE
-from common.models.game_map import ChipSet, MapData
+from common.models.game_map import MapData
 from game.consts.screen_settings import SCREEN_HEIGHT, SCREEN_SIZE, SCREEN_WIDTH, ZOOM, ZOOMED_CHIP
-from game.model.languages import Language
 from game.ui.scenes.utils.image_manager import convert_opencv_img_to_pygame
-
-def get_chip_image(chipset_image, chip_id: int):
-    x = (chip_id % (chipset_image.shape[1] // CHIP_SIZE)) * CHIP_SIZE
-    y = (chip_id // (chipset_image.shape[1] // CHIP_SIZE)) * CHIP_SIZE
-    chip_image = chipset_image[y:y + CHIP_SIZE, x:x + CHIP_SIZE]
-    chip_image = cv2.resize(chip_image, (CHIP_SIZE * ZOOM, CHIP_SIZE * ZOOM), interpolation=cv2.INTER_NEAREST)
-    return convert_opencv_img_to_pygame(chip_image)
+from game.utils.chip_loader import get_chip_image
 class MapField:
     def __init__(self, view_surface, map_data: MapData):
         self.view_surface = view_surface # 描画するSurface
-        self.surface = pygame.Surface((SCREEN_WIDTH + ZOOMED_CHIP * 2, SCREEN_HEIGHT + ZOOMED_CHIP*2))
+        surface_size = (min(ZOOMED_CHIP * map_data.size[0], SCREEN_WIDTH), min(ZOOMED_CHIP * map_data.size[1], SCREEN_HEIGHT))
+        self.surface = pygame.Surface(surface_size) # 描画するSurface
         self.map_data = map_data
         self.chipset_image = cv2.imread(self.map_data.chipset.chipset_image_path, cv2.IMREAD_UNCHANGED)
 
         self.current_topleft = (0, 0) # スクリーン座標系の左上座標
-        self.chip_image_cache = {} # 
+        self.chip_image_cache = {} # チップ画像キャッシュ
         self.screen_size = (self.map_data.size[0] * ZOOMED_CHIP, self.map_data.size[1] * ZOOMED_CHIP)
     
     def update_topleft(self, topleft: tuple[int, int]):
@@ -30,7 +24,7 @@ class MapField:
             self.current_topleft = topleft
 
     def draw(self):
-        self.view_surface.blit(self.surface, (-((self.current_topleft[0]+1)% ZOOMED_CHIP), -((self.current_topleft[1]+1)% ZOOMED_CHIP)))
+        self.view_surface.blit(self.surface, (-((self.current_topleft[0])% ZOOMED_CHIP), -((self.current_topleft[1])% ZOOMED_CHIP)))
     
     def reset_map_data(self, map_data: MapData):
         self.map_data = map_data
@@ -64,9 +58,15 @@ class MapField:
                     self.draw_at(topleft, (x, y))
         # Redraw tiles for vertical displacement
         if displacement[1] != 0:
-            y_start = floor(tile_topleft[1] - 1) if displacement[1] > 0 else ceil(tile_topleft[1]) - visible_tiles[1]
-            y_end = ceil(tile_topleft[1] + 1) if displacement[1] > 0 else floor(tile_topleft[1])
-            # extend the horizontal range by one tile on both ends to prevent gaps
+            if displacement[1] > 0:
+                # When moving down, draw the new bottom-side tiles.
+                y_start = floor(tile_topleft[1]) + visible_tiles[1]
+                y_end = ceil(tile_topleft[1]) + visible_tiles[1] + 1
+            else:
+                # When moving up, draw the new top-side tiles.
+                y_start = floor(tile_topleft[1]) - 1
+                y_end = ceil(tile_topleft[1])
+            # extend the vertical range by one tile on both ends to prevent gaps
             for y in range(y_start, y_end):
                 for x in range(floor(tile_topleft[0]) - 1, ceil(tile_topleft[0]) + visible_tiles[0] + 1):
                     self.draw_at(topleft, (x, y))

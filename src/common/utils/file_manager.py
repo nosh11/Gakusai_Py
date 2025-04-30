@@ -5,7 +5,7 @@ __ASSETS_DIR__ = os.path.join(__PROJECT_ROOT__, "assets")
 __RESOURCE_DIR__ = os.path.join(__PROJECT_ROOT__, "resource")
 __TEMPLATE_DIR__ = os.path.join(__PROJECT_ROOT__, "template")
 
-def get_static_file_path(file_path: str) -> str:
+def get_asset_file_path(file_path: str) -> str:
     return os.path.join(__ASSETS_DIR__, file_path)
 def get_resource_file_path(file_path: str) -> str:
     return os.path.join(__RESOURCE_DIR__, file_path)

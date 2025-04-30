@@ -1,5 +1,5 @@
 from enum import Enum
-from common.utils.file_manager import get_static_file_path, get_resource_file_path
+from common.utils.file_manager import get_asset_file_path, get_resource_file_path
 import pygame
 import yaml
 
@@ -15,7 +15,7 @@ class Language(Enum):
         self.font = font
 
     def get_font(self, size=32) -> pygame.font.Font:
-        file_path = get_static_file_path(f"fonts/{self.font}")
+        file_path = get_asset_file_path(f"fonts/{self.font}")
         return pygame.font.Font(file_path, size)
     
     def get_display_name(self) -> str:

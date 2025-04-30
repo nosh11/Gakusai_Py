@@ -1,7 +1,7 @@
 import pygame
 from game.app_controller import AppController
 from game.app_state import AppStats as stats
-from common.utils.file_manager import get_static_file_path
+from common.utils.file_manager import get_asset_file_path
 from game.interfaces.view_updater import ViewUpdater
 from game.model.languages import Language
 from game.commons.view_transition import FadeTransition, SingleSlideTransition, RadialTransition, SlideTransition
@@ -16,7 +16,7 @@ def main():
     pygame.mouse.set_visible(True)
     pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE, 32, 0)
     pygame.display.set_caption("croissant-boy")
-    pygame.display.set_icon(pygame.image.load(get_static_file_path("icon.png")))
+    pygame.display.set_icon(pygame.image.load(get_asset_file_path("icon.png")))
 
     app_controller = AppController()
 
@@ -28,7 +28,7 @@ def main():
         "map": MapScene(app_controller, Language.Japanese, "map"),
         "options": OptionScene(app_controller, Language.Japanese, "options"),
     }
-    pygame.mixer.music.load(get_static_file_path("bgm/Best_Beat.mp3"))
+    pygame.mixer.music.load(get_asset_file_path("bgm/Best_Beat.mp3"))
     pygame.mixer.music.play(-1)
 
     while True:

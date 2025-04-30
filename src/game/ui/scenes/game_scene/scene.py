@@ -1,6 +1,7 @@
 import pygame
 from common.models.game_map import load_map_data
-from commons.view import Scene
+from common.utils.file_manager import get_asset_file_path
+from game.commons.view import Scene
 from game.ui.scenes.game_scene.components.map_field import MapField
 from game.ui.scenes.game_scene.components.message_box import MessageBox
 from game.ui.scenes.game_scene.components.game_player import GamePlayer
@@ -9,9 +10,7 @@ SKIP_CD = 10
 
 class GameScene(Scene):
     def define_text_labels(self):
-        font = self.get_language().get_font(50)
-        pause_menu_label = font.render("test", True, (255, 255, 255))
-        self.set_text_label("pause_menu", pause_menu_label)
+        pass
 
     def setup(self):
         self.message_box = MessageBox(self.display_surface)
@@ -21,13 +20,18 @@ class GameScene(Scene):
         self.skip_cd = SKIP_CD
         self.map_data = load_map_data("map1")
         self.map_field = MapField(self.display_surface, self.map_data)
-        self.map_field.reset_map_surface()
         self.player = GamePlayer(self.display_surface, self.map_field)
         self.player.set_position(self.map_data.init_pos)
+        self.map_field.reset_map_surface()
+        self.background_image: pygame.Surface = None
+        if self.map_data.background_image_path:
+            path = get_asset_file_path(f"backgrounds\\{self.map_data.background_image_path}")
+            self.background_image = pygame.image.load(path)
         
 
     def display(self):
-        # self.display_surface.blit(self.background_image, (0, 0))
+        if self.background_image is not None:
+            self.display_surface.blit(self.background_image, (0, 0))
         self.message_box.update()
         self.message_box.draw()
         self.map_field.draw()

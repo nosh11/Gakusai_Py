@@ -30,9 +30,18 @@ class MapTileCanvas(QScrollArea):
         self.background_cache = None  # 背景用キャッシュPixMapを追加
         self.setWidgetResizable(True)  # スクロールエリアのサイズを自動調整
         self.build_background_cache()  # 初回キャッシュ作成
+        self.reset_size()  # サイズをリセット
+
+    def reset_size(self):
+        tile_size = CHIP_SIZE * self.zoom
+        self.size = self.map_data.size
+        size_x, size_y = self.size
+        self.setFixedSize(size_x * tile_size, size_y * tile_size)  # 固定サイズを設定
 
     def build_background_cache(self):
         # キャンバスサイズを計算
+        if self.size != self.map_data.size:
+            self.reset_size()
         tile_size = CHIP_SIZE * self.zoom
         self.viewport_rect = self.viewport().rect()  # ビューポートの矩形を取得
         self.background_cache = QPixmap(self.viewport_rect.size())  # ビューポートのサイズに合わせてキャッシュを作成

@@ -1,6 +1,6 @@
 import pygame
 from commons.view import Scene
-from common.utils.file_manager import get_static_file_path
+from common.utils.file_manager import get_asset_file_path
 from game.model.languages import Language
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
 
@@ -9,7 +9,7 @@ credit_surface: pygame.Surface
 def make_credit_surface():
     global credit_surface
     credit_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-    font_console = pygame.font.Font(get_static_file_path(f"fonts/unifont.otf"), 10)
+    font_console = pygame.font.Font(get_asset_file_path(f"fonts/unifont.otf"), 10)
     font_console.set_bold(True)
     credit_surface.blit(font_console.render("credit", True, (255, 255, 255)), (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 50))
     credit_surface.blit(font_console.render("press Enter to return", True, (255, 255, 255)), (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 + 50))
@@ -18,17 +18,14 @@ def make_credit_surface():
     croissant-boy
 
     制作 nosssy
-    音楽制作 nosssy
-    その他 nosssy
-    special thanks
-    coffee
-    additional thanks to the community
-    for their support and feedback.
+    special thanks to:
+    Cafe au lait
+    syoriken circle
     ありがとうございます。
     arigato gozaimasu.
     """
 
-    font_console = pygame.font.Font(get_static_file_path(f"fonts/unifont.otf"), 20)
+    font_console = pygame.font.Font(get_asset_file_path(f"fonts/unifont.otf"), 20)
     for line in text.strip().split('\n'):
         credit_surface.blit(font_console.render(line, True, (255, 255, 255)), (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 30 * text.strip().split('\n').index(line)))
 
@@ -48,7 +45,7 @@ class TitleScene(Scene):
 
     def setup(self):
         self.display_surface.fill((100, 150, 30))
-        self.background_image = pygame.image.load(get_static_file_path("img/croissant_boy.png"))
+        self.background_image = pygame.image.load(get_asset_file_path("img/croissant_boy.png"))
         self.current_choice = 0
 
     def display(self):

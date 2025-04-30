@@ -2,7 +2,7 @@
 
 import random
 import pygame
-from common.utils.file_manager import get_static_file_path
+from common.utils.file_manager import get_asset_file_path
 from game.interfaces.observe import Observable, Observer
 from commons.view import Scene
 from commons.widget import UIWidget
@@ -20,7 +20,7 @@ class BGMFrame(UIWidget):
         self.filename = filename
 
     def play(self):
-        pygame.mixer.music.load(get_static_file_path(f"bgm/{self.filename}"))
+        pygame.mixer.music.load(get_asset_file_path(f"bgm/{self.filename}"))
         pygame.mixer.music.play(-1)
 
     def update(self) -> bool:
@@ -30,6 +30,7 @@ class BGMFrame(UIWidget):
         pygame.draw.rect(self.showing_image, color, self.showing_image.get_rect(), 3)
 
 BGMS = {
+    "BARIKI DRINK": "bariki.mp3",
     "断界桟": "bgm_1.wav",
     "蛍光": "bgm_2.wav",
     "sky_bridge_music": "bgm_3.wav",
@@ -109,48 +110,39 @@ class SoundRoomScene(Scene):
             column, row = self.selected_bgm
             current_bgm_frame: BGMFrame =  self.bgm_frames[row][column]
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
-                column = (column - 1) % len(self.bgm_frames[row])
-
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
-                column = (column + 1) % len(self.bgm_frames[row])
-
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
-                current_x = current_bgm_frame.pos[0]
-                row = (row - 1) % len(self.bgm_frames)
-                # column の取得方法:
-                # self.bgm_frames[row]: list[BGMFrame] について、
-                # abs(current_x - self.bgm_frames[row][column]) が最小となる column を求める。
-                # ただし、column は 0 <= column < len(self.bgm_frames[row]) を満たす必要がある。
-                # そのため、column の初期値は 0 とする。
-                column = 0
-                min_diff = abs(current_x - self.bgm_frames[row][column].pos[0])
-                for i in range(len(self.bgm_frames[row])):
-                    diff = abs(current_x - self.bgm_frames[row][i].pos[0])
-                    if diff < min_diff:
-                        min_diff = diff
-                        column = i
-                column = min(max(column, 0), len(self.bgm_frames[row])-1)
-
-
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
-                current_x = current_bgm_frame.pos[0]
-                row = (row + 1) % len(self.bgm_frames)
-                column = 0
-                min_diff = abs(current_x - self.bgm_frames[row][column].pos[0])
-                for i in range(len(self.bgm_frames[row])):
-                    diff = abs(current_x - self.bgm_frames[row][i].pos[0])
-                    if diff < min_diff:
-                        min_diff = diff
-                        column = i
-                column = min(max(column, 0), len(self.bgm_frames[row])-1)
-            
-            else:
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
                     self.bgm_frames[row][column].play()
-                return
+                    return
+                elif event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                    if event.key == pygame.K_LEFT:
+                        column = (column - 1) % len(self.bgm_frames[row])
+                    else:
+                        column = (column + 1) % len(self.bgm_frames[row])
+                elif event.key in (pygame.K_UP, pygame.K_DOWN):
+                    current_x = current_bgm_frame.pos[0]
+                    direction = -1 if event.key == pygame.K_UP else 1
+                    row = (row + direction) % len(self.bgm_frames)
+                    column = 0
+                    min_diff = abs(current_x - self.bgm_frames[row][column].pos[0])
+                    for i in range(len(self.bgm_frames[row])):
+                        diff = abs(current_x - self.bgm_frames[row][i].pos[0])
+                        if diff < min_diff:
+                            min_diff = diff
+                            column = i
+                    column = min(max(column, 0), len(self.bgm_frames[row]) - 1)
+                self.selected_bgm = (column, row)    
             
-            self.selected_bgm = (column, row)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mouse_x, mouse_y = event.pos
+                    for row in range(len(self.bgm_frames)):
+                        for column in range(len(self.bgm_frames[row])):
+                            frame: BGMFrame = self.bgm_frames[row][column]
+                            if frame.showing_image.get_rect(topleft=(frame.pos[0], frame.pos[1])).collidepoint(mouse_x, mouse_y):
+                                self.selected_bgm = (column, row)
+                                frame.play()
+                                return
     
     def load_text(self):
         self.text_dict = {

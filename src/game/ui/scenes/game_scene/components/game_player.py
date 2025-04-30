@@ -1,6 +1,6 @@
 import pygame
 from pygame.math import Vector2
-from common.utils.file_manager import get_static_file_path
+from common.utils.file_manager import get_asset_file_path
 from game.consts.screen_settings import SCREEN_SIZE, ZOOM, ZOOMED_CHIP
 from game.ui.scenes.game_scene.components.map_field import MapField
 
@@ -28,7 +28,7 @@ class GamePlayer:
         self.move_speed = 0.3
         self.display_surface: pygame.Surface = display_surface
         self.map_field = map_field
-        img = pygame.image.load(get_static_file_path("character/down/0.png"))
+        img = pygame.image.load(get_asset_file_path("character/down/0.png"))
         img = pygame.transform.scale(img, (int(img.get_width() * ZOOM / 2), int(img.get_height() * ZOOM / 2)))
         self.surface = img.convert_alpha()
         self.offset = Vector2(0, 0)
@@ -51,7 +51,7 @@ class GamePlayer:
         for key, v in movements[GamePlayer.is_wasd].items():
             if keys[key]:
                 new_pos = self.pos + v * self.move_speed
-                if not self.is_in_wall(int(new_pos.x), int(new_pos.y)) and all(
+                if not self.is_in_wall(int(new_pos.x+0.5), int(new_pos.y+1.5)) and all(
                         0 <= new_pos[i] < self.map_field.map_data.size[i] - 1 for i in range(2)):
                     self.pos = new_pos
                     self.update_map_field_topleft()
@@ -72,7 +72,7 @@ class GamePlayer:
 
     def set_position(self, position):
         self.pos = Vector2(position)
-        # sself.update_map_field_topleft()
+        self.update_map_field_topleft()
 
     def shoot_bullet(self):
         target_pos = Vector2(pygame.mouse.get_pos())
@@ -100,7 +100,8 @@ class GamePlayer:
         #     bullet.x >= self.map_field.map_data.size_x - 1 or bullet.y >= self.map_field.map_data.size_y - 1):
         #     return True
         if (bullet.pos.x < 0 or bullet.pos.y < 0 or 
-            bullet.pos.x >= self.map_field.map_data.size_x - 1 or bullet.pos.y >= self.map_field.map_data.size_y - 1):
+            bullet.pos.x >= self.map_field.map_data.size_x - 1 or bullet.pos.y >= self.map_field.map_data.size_y - 1 or
+            self.is_in_wall(int(bullet.pos.x + 0.5), int(bullet.pos.y + 0.5))):
             return True
         bullet.draw(self.map_field.view_surface, self.map_field.current_topleft)
         return False

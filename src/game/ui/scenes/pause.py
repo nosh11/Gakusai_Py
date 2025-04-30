@@ -1,5 +1,5 @@
 import pygame
-from commons.view import Scene
+from game.commons.view import Scene
 from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
 class PauseScene(Scene):

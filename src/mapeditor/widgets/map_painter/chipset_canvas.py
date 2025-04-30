@@ -37,7 +37,6 @@ class ChipSetCanvas(QWidget):
         self.chipset = chipset
         self.zoom = 2
         self.selected_chip_id = 0
-        self.setMinimumSize(400, 800)
         self.background_cache = None  # 背景用キャッシュPixMapを追加
         self.setStyleSheet("background-color: white;")
 
@@ -61,17 +60,19 @@ class ChipSetCanvas(QWidget):
     def build_background_cache(self):
         # キャンバスサイズを計算
         tile_size = CHIP_SIZE * self.zoom
-        width = tile_size * 16
-        height = tile_size * 24
+        width = tile_size * 30
+        height = tile_size * 16
+        self.setMinimumSize(width, height)
+        self.setMaximumSize(width, height)  # 最大サイズを設定
 
         self.background_cache = QPixmap(width, height)
         self.background_cache.fill(QColor(255, 255, 255))  # 背景色を白に
 
         painter = QPainter(self.background_cache)
 
-        for x in range(16):
-            for y in range(24):
-                tile_id = x + y * 16
+        for x in range(30):
+            for y in range(16):
+                tile_id = x + y * 30
                 image = SharedImageCache.get_image(self.chipset, tile_id)
                 if image:
                     scaled_image = image.scaled(tile_size, tile_size, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
@@ -93,7 +94,7 @@ class ChipSetCanvas(QWidget):
 
             # 選択中のタイル枠を描画
             tile_size = CHIP_SIZE * self.zoom
-            x, y = self.selected_chip_id % 16, self.selected_chip_id // 16
+            x, y = self.selected_chip_id % 30, self.selected_chip_id // 30
             painter.setPen(QColor(255, 0, 0))
             painter.drawRect(QRect(x * tile_size, y * tile_size, tile_size, tile_size))
             painter.end()
@@ -103,5 +104,5 @@ class ChipSetCanvas(QWidget):
             pos = event.pos()
             x = pos.x() // (CHIP_SIZE * self.zoom)
             y = pos.y() // (CHIP_SIZE * self.zoom)
-            self.set_selected_chip_id(x + y * 16)
+            self.set_selected_chip_id(x + y * 30)
             self.notify_observer()
