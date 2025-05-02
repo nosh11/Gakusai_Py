@@ -1,7 +1,7 @@
 import cv2
 from common.consts.screen_settings import CHIP_SIZE
 from game.consts.screen_settings import ZOOMED_CHIP
-from game.ui.scenes.utils.image_manager import convert_opencv_img_to_pygame
+from game.scenes.utils.image_manager import convert_opencv_img_to_pygame
 
 
 def get_chip_image(chipset_image, chip_id: int):
