@@ -1,6 +1,6 @@
 import pygame
 from common.model.event import MapChangeFunction, PeriodicEvent, PlayerStepOnEvent, ShowMessageFunction
-from game.interface.game_interface import GameInterface
+from common.interface.game_interface import GameInterface
 from common.model.game_map import load_map_data
 from common.util.file_manager import get_asset_file_path
 from game.common.view import Scene

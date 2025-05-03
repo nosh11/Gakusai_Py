@@ -29,7 +29,6 @@ class MapTileCanvas(QScrollArea):
         self.background_cache = None  # 背景用キャッシュPixMapを追加
         self.setWidgetResizable(True)  # スクロールエリアのサイズを自動調整
         self.build_background_cache()  # 初回キャッシュ作成
-        self.reset_size()  # サイズをリセット
 
     def reset_size(self):
         tile_size = CHIP_SIZE * self.zoom
@@ -67,6 +66,13 @@ class MapTileCanvas(QScrollArea):
             painter.drawLine(x * tile_size, start_y * tile_size, x * tile_size, end_y * tile_size)
         for y in range(start_y, end_y + 1):
             painter.drawLine(start_x * tile_size, y * tile_size, end_x * tile_size, y * tile_size)
+        
+        # map_data.init_posを描画
+        if self.map_data.init_pos:
+            init_x, init_y = self.map_data.init_pos
+            painter.setPen(QColor(0, 200, 200))
+            painter.drawRect(init_x * tile_size, init_y * tile_size, tile_size, tile_size)
+
         painter.end()
 
 
@@ -115,7 +121,7 @@ class MapTileCanvas(QScrollArea):
         x = pos.x() // (CHIP_SIZE * self.zoom)
         y = pos.y() // (CHIP_SIZE * self.zoom)
         selected_chip_id = self.chipset_canvas.selected_chip_id
-        if self.map_data.is_within((x, y)):
+        if self.map_data.is_within_wall((x, y)) and selected_chip_id is not None:
             self.map_data.set_tile((x, y), selected_chip_id)
             self.update_needed_tiles.add((x, y))
             self.build_background_cache()  # 背景キャッシュを更新

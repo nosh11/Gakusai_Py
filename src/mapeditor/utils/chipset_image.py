@@ -1,4 +1,4 @@
-from common.models.game_map import ChipSet
+from common.model.game_map import ChipSet
 from common.consts.screen_settings import CHIP_SIZE
 import cv2
 

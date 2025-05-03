@@ -2,7 +2,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any, List, Tuple
 
 import yaml
-from game.interface.game_interface import GameInterface
+from common.interface.game_interface import GameInterface
 from common.util.yaml_factory import Model, make_constructor, make_representer
 
 class EventFunctionMeta(type):
