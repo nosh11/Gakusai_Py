@@ -4,6 +4,9 @@ from common.model.stage import StageMap, Stage
 
 
 class MapScene(Scene):
+    def __init__(self, app_controller, language, screen_id: str = "map"):
+        super().__init__(app_controller, language, screen_id)
+
     def load_text(self):
         pass
 

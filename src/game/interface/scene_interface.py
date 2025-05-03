@@ -65,6 +65,9 @@ class SceneInterface:
     def on_load(self):
         pass
 
+    def on_unload(self):
+        pass
+
     def reset_all_components(self):
         self.load_text()
         self.define_text_labels()

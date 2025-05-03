@@ -1,9 +1,9 @@
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Any, List, Tuple
 
 import yaml
 from game.interface.game_interface import GameInterface
-from common.util.yaml_factory import make_constructor, make_representer
+from common.util.yaml_factory import Model, make_constructor, make_representer
 
 class EventFunctionMeta(type):
     registry = {}
@@ -30,14 +30,7 @@ class MapEventMeta(type):
         return cls
 
 @dataclass
-class EventFunction(metaclass=EventFunctionMeta):
-    function_type: str
-    params: dict = field(default_factory=dict, init=False)
-
-    def __init__(self, function_type: str, **kwargs: Any):
-        self.function_type = function_type
-        self.params = kwargs
-
+class EventFunction(Model, metaclass=EventFunctionMeta):
     def execute(self, game_state: GameInterface, *args: Any, **kwargs: Any) -> None:
         raise NotImplementedError("This method should be overridden in subclasses")
 
@@ -76,7 +69,7 @@ class MapChangeFunction(EventFunction):
     new_map: str
 
     def __post_init__(self):
-        self.function_type = "change_tile"
+        self.function_type = "map_change"
         self.params = {"pos": self.pos, "new_map": self.new_map}
 
     def execute(self, game_state: GameInterface, *args: Any, **kwargs: Any) -> None:
@@ -86,46 +79,60 @@ class MapChangeFunction(EventFunction):
 
 
 @dataclass
-class MapEvent(metaclass=MapEventMeta):
-    event_type: str
-    event_id: str
-    event_name: str
+class MapEvent(Model, metaclass=MapEventMeta):
+    event_description: str = ""
     functions: List[EventFunction] = field(default_factory=list)
 
-    def check(self, *args: Any, **kwargs: Any) -> bool:
+    def from_dict(cls, data: dict) -> 'MapEvent':
+        event_type = data.get("event_type", "unknown")
+        if event_type in MapEventMeta.registry:
+            cls = MapEventMeta.registry[event_type]
+            return cls(**data)
+        else:
+            raise ValueError(f"Unknown event type: {event_type}")
+    
+    def to_dict(self) -> dict:
+        data = {
+            'event_description': self.event_description,
+            'functions': [asdict(func) for func in self.functions],
+        }
+        return data
+
+    def check(self, game_state: GameInterface):
         raise NotImplementedError("This method should be overridden in subclasses")
     
-    def on_event(self, *args: Any, **kwargs: Any) -> None:
+    def on_event(self, game_state: GameInterface, *args: Any, **kwargs: Any) -> None:
         for function in self.functions:
-            function.execute(*args, **kwargs)
+            function.execute(game_state, *args, **kwargs)
 
 @dataclass
 class PlayerStepOnEvent(MapEvent):
-    pos: Tuple[int, int] = field(default_factory=tuple)
+    pos: Tuple[int, int] = field(default_factory=lambda: (0, 0))
 
     def __post_init__(self):
+        self.event_type = "player_step_on_event"
         self.is_step_on = False
-        self.event_type = "player_step_on"
 
-    def check(self, player_pos: Tuple[int, int]) -> bool:
-        if player_pos != self.pos:
+    def check(self, game_state: GameInterface, *args: Any, **kwargs: Any):
+        x, y = game_state.get_player_pos()
+        if (int(x), int(y)) != self.pos:
             self.is_step_on = False
             return False
         if not self.is_step_on:
             self.is_step_on = True
-            return True
+            self.on_event(game_state, *args, **kwargs)
         return False
 
 @dataclass
 class PeriodicEvent(MapEvent):
-    interval: int = 0
+    interval: int = 100
     elapsed_time: int = 0
 
     def __post_init__(self):
         self.event_type = "periodic"
 
-    def check(self, delta_time: int) -> None:
-        self.elapsed_time += delta_time
+    def check(self, game_state: GameInterface, *args: Any, **kwargs: Any) -> None:
+        self.elapsed_time += 1
         if self.elapsed_time >= self.interval:
-            self.on_event()
+            self.on_event(game_state, *args, **kwargs)
             self.elapsed_time = 0

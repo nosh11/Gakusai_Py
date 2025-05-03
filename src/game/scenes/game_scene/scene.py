@@ -1,4 +1,5 @@
 import pygame
+from common.model.event import MapChangeFunction, PeriodicEvent, PlayerStepOnEvent, ShowMessageFunction
 from game.interface.game_interface import GameInterface
 from common.model.game_map import load_map_data
 from common.util.file_manager import get_asset_file_path
@@ -7,11 +8,12 @@ from game.models.player import Player
 from game.scenes.game_scene.components.map_field import MapField
 from game.scenes.game_scene.components.message_box import MessageBox
 from game.scenes.game_scene.components.game_player import GamePlayer
+from game.scenes.pause import PauseScene
 
 SKIP_CD = 10
 
 class GameScene(Scene, GameInterface):
-    def __init__(self, app_controller, language, screen_id, data_id=0):
+    def __init__(self, app_controller, language, screen_id="game", data_id=0):
         self.map_data = load_map_data("map1")
         self.player = Player.load(data_id)
         if self.player is None:
@@ -19,7 +21,7 @@ class GameScene(Scene, GameInterface):
         GameInterface.__init__(self, load_map_data("map1"), self.player)
         super().__init__(app_controller, language, screen_id)
 
-    def get_player_pos(self) -> tuple[int, int]:
+    def get_player_pos(self) -> tuple[float, float]:
         return tuple(self.game_player.pos)
     
     def set_player_pos(self, pos: tuple[int, int]):
@@ -53,8 +55,11 @@ class GameScene(Scene, GameInterface):
         if self.map_data.background_image_path:
             path = get_asset_file_path(f"backgrounds\\{self.map_data.background_image_path}")
             self.background_image = pygame.image.load(path)
-
-        GameInterface.__init__(self, self.map_data, self.game_player)
+        
+        self.map_data.event_list.append(
+            PlayerStepOnEvent(functions=[MapChangeFunction((2, 2), "test_map")],
+                            pos=(1, 1)) # Dummy event for testing
+        )
         
 
     def display(self):
@@ -69,7 +74,7 @@ class GameScene(Scene, GameInterface):
         self.game_player.move()
 
         for event in self.map_data.event_list:
-            event.check
+            event.check(self)
 
         if pygame.event.get(pygame.KEYDOWN):
             if pygame.key.get_pressed()[pygame.K_SPACE]:
@@ -77,9 +82,7 @@ class GameScene(Scene, GameInterface):
             elif pygame.key.get_pressed()[pygame.K_a]:
                 self.message_box.is_hidden = not self.message_box.is_hidden
             elif pygame.key.get_pressed()[pygame.K_ESCAPE]:
-                self._app_controller.set_transition_type("slide>slide")
-                self._app_controller.set_transition_seconds((0.01, 0.01))
-                self._app_controller.set_next_view("pause")
+                self._app_controller.set_next_view(PauseScene(self._app_controller, self.get_language(), "pause"))
             elif pygame.key.get_pressed()[pygame.K_z]:
                 self.z_key_pressed()
         else:

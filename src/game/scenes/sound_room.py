@@ -47,6 +47,9 @@ BGMS = {
 
 
 class SoundRoomScene(Scene):
+    def __init__(self, app_controller, language, screen_id: str = "sound_room"):
+        super().__init__(app_controller, language, screen_id)
+
     def setup(self):
         self.bgm_frames = [[]]
         bgm_frame = None

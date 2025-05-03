@@ -3,7 +3,7 @@ from game.common.transition_controller import ViewTransitionSwitcher
 from game.common.view import Scene
 from common.util.file_manager import get_asset_file_path
 from common.model.language import Language
-from game.common.view_transition import FadeTransition, SlideTransition
+from game.common.view_transition import FadeTransition
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
 from game.scenes.game_scene.scene import GameScene
 from game.scenes.sound_room import SoundRoomScene

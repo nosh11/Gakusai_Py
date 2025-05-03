@@ -12,7 +12,7 @@ class AppStats:
         if AppStats.current_view == view:
             return
         if AppStats.current_view is not None:
-            # AppStats.current_view.on_unload()
+            AppStats.current_view.on_unload()
             pass
         AppStats.current_view = view
         AppStats.current_view.on_load()

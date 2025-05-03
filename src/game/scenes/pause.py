@@ -5,6 +5,9 @@ from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 from game.common.view_transition import FadeTransition
 
 class PauseScene(Scene):
+    def __init__(self, app_controller, language, screen_id: str = "pause"):
+        super().__init__(app_controller, language, screen_id)
+
     def define_text_labels(self):
         self.font_console = pygame.font.Font(self.get_language().get_font(), 10)
 

@@ -13,7 +13,7 @@ class GameInterface:
     def get_player(self) -> PlayerInterface:
         return self.__player
 
-    def get_player_pos(self) -> tuple[int, int]:
+    def get_player_pos(self) -> tuple[float, float]:
         raise NotImplementedError("This method should be overridden in subclasses")
     
     def set_player_pos(self, pos: tuple[int, int]) -> None:
