@@ -52,17 +52,17 @@ class MapData(MapInterface):
         data['background_image_path'] = data.get('background_image_path', None)
         return cls(**data)
 
-    def is_within(self, pos: tuple[int, int]):
+    def is_within_wall(self, pos: tuple[int, int]):
         return all(0 <= pos[i] < self.size[i] for i in range(2))
 
     def set_tile(self, pos: tuple[int, int], chip_id: int) -> bool:
-        if self.is_within(pos):
+        if self.is_within_wall(pos):
             self.chips_map[pos[1]][pos[0]] = chip_id
             return True
         return False
 
     def get_tile(self, pos: tuple[int, int]) -> int | None:
-        if self.is_within(pos):
+        if self.is_within_wall(pos):
             return self.chips_map[pos[1]][pos[0]]
         return None
         

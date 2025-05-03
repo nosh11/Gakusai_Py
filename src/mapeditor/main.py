@@ -14,9 +14,9 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import ( 
     Qt, 
 )
-from common.models import game_map
-from common.models.game_map import MapData, save_map_data
-from common.models.map.chip_set import load_chipset
+from common.model import game_map
+from common.model.game_map import MapData, save_map_data
+from common.model.map.chip_set import load_chipset
 from mapeditor.chip_editor import ChipEditor
 from mapeditor.map_editor import MapEditor
 from mapeditor.widgets.map_painter import ChipSetCanvas, MapTileCanvas, SharedImageCache

@@ -45,7 +45,7 @@ class ChangeTileFunction(EventFunction):
 
     def execute(self, game_state: GameInterface, *args: Any, **kwargs: Any) -> None:
         map_interface = game_state.get_map()
-        if map_interface.is_within(self.pos):
+        if map_interface.is_within_wall(self.pos):
             map_interface.set_tile(self.pos, self.new_tile)
             print(f"Tile at {self.pos} changed to {self.new_tile}.")
         else:

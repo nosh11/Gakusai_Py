@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import ( 
     Qt, 
 )
-from common.models.map.chip_set import ChipSet, save_chipset
+from common.model.map.chip_set import ChipSet, save_chipset
 from mapeditor.widgets.chip_editor_ui import ChipEditorUi
 from mapeditor.widgets.map_painter import ChipSetCanvas
 
