@@ -5,8 +5,8 @@ import pygame
 from common.util.file_manager import get_asset_file_path
 from game.common.transition_controller import ViewTransitionSwitcher
 from game.common.view_transition import FadeTransition
-from game.interface.observe import Observable, Observer
-from common.view import Scene
+from game.interface.observe_interface import Observable, Observer
+from game.common.scene import Scene
 from common.widget import UIWidget
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
 
@@ -108,7 +108,7 @@ class SoundRoomScene(Scene):
     def tick(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                from game.scenes.title import TitleScene
+                from game.scenes.title.title import TitleScene
                 t = [FadeTransition(0.5), FadeTransition(0.5)]
                 t[0].set_view(self)
                 t[1].set_view_from_class(TitleScene, self._app_controller, self.get_language(), "title")

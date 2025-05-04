@@ -3,7 +3,7 @@ from common.model.event import MapChangeFunction, PeriodicEvent, PlayerStepOnEve
 from common.interface.game_interface import GameInterface
 from common.model.game_map import load_map_data
 from common.util.file_manager import get_asset_file_path
-from game.common.view import Scene
+from game.common.scene import Scene
 from game.models.player import Player
 from game.scenes.game_scene.components.map_field import MapField
 from game.scenes.game_scene.components.message_box import MessageBox

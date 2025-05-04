@@ -1,5 +1,5 @@
 import pygame
-from game.common.view import Scene
+from game.common.scene import Scene
 from common.model.stage import StageMap, Stage
 
 

@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 import pygame
 from common.util.file_manager import get_asset_file_path
 from game.utils.image_processor import BrightnessProcessor
-from game.interface.observe import Observable
+from game.interface.observe_interface import Observable
 
 class UIWidget(metaclass=ABCMeta):
     def __init__(self, view_display_surface: pygame.Surface, x, y):
