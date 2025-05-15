@@ -1,4 +1,4 @@
-from game.common.view_transition import SingleViewTransition, ViewTransition
+from game.app.transition import SingleViewTransition, ViewTransition
 from game.interface.transition_interface import TransitionInterface
 
 class ViewTransitionSingle(TransitionInterface):

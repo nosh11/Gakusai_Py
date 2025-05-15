@@ -1,12 +1,15 @@
 import pygame
-from game.common.transition_controller import ViewTransitionSwitcher
-from game.common.view import Scene
+from game.app.scene import Scene
+from game.app.transition_controller import ViewTransitionSwitcher
 from consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
-from game.common.view_transition import FadeTransition
+from game.app.transition import FadeTransition
 
 class PauseScene(Scene):
-    def __init__(self, app_controller, language, screen_id: str = "pause"):
-        super().__init__(app_controller, language, screen_id)
+    def get_screen_id(self):
+        return "pause"
+
+    def __init__(self, app):
+        super().__init__(app)
 
     def define_text_labels(self):
         self.font_console = pygame.font.Font(self.get_language().get_font(), 10)
@@ -32,7 +35,7 @@ class PauseScene(Scene):
     def tick(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                from game.scenes.title import TitleScene
+                from game.scenes.title.title import TitleScene
                 t = [FadeTransition(0.5), FadeTransition(0.5)]
                 t[0].set_view(self)
                 t[1].set_view_from_class(TitleScene, self._app_controller, self.get_language(), "title")

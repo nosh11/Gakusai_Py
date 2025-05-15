@@ -3,7 +3,7 @@ from common.model.event import MapChangeFunction, PeriodicEvent, PlayerStepOnEve
 from common.interface.game_interface import GameInterface
 from common.model.game_map import load_map_data
 from common.util.file_manager import get_asset_file_path
-from game.common.view import Scene
+from game.app.scene import Scene
 from game.models.player import Player
 from game.scenes.game_scene.components.map_field import MapField
 from game.scenes.game_scene.components.message_box import MessageBox
@@ -13,14 +13,17 @@ from game.scenes.pause import PauseScene
 SKIP_CD = 10
 
 class GameScene(Scene, GameInterface):
-    def __init__(self, app_controller, language, screen_id="game", data_id=0):
-        self.map_data = load_map_data("map1")
-        self.player = Player.load(data_id)
+    def get_screen_id(self):
+        return "game"
+    
+    def __init__(self, app, map_data_id="map1", player_data_id=0):
+        self.map_data = load_map_data(map_data_id)
+        self.player = Player.load(player_data_id)
         if self.player is None:
-            raise ValueError(f"Player with ID {data_id} not found.")
-        GameInterface.__init__(self, load_map_data("map1"), self.player)
-        super().__init__(app_controller, language, screen_id)
-
+            raise ValueError(f"Player with ID {player_data_id} not found.")
+        GameInterface.__init__(self, self.map_data, self.player)
+        super().__init__(app)
+    
     def get_player_pos(self) -> tuple[float, float]:
         return tuple(self.game_player.pos)
     
