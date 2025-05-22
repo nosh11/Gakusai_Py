@@ -6,12 +6,10 @@ class Stage:
         self.is_completed = False
         self.is_unlocked = False
 
-
-
 class StageMap:
     def __init__(self):
         self.stages: list[Stage] = []
-        self.current_stage: Stage = None
+        self.current_stage: Stage | None = None
         self.map_id: int = 0
         self.map_name: str = ""
         self.edges: list[tuple[int, int]] = []
@@ -22,10 +20,10 @@ class StageMap:
     def set_current_stage(self, stage: Stage):
         self.current_stage = stage
 
-    def get_current_stage(self) -> Stage:
+    def get_current_stage(self) -> Stage | None:
         return self.current_stage
     
-    def get_stage_by_id(self, stage_id: int) -> Stage:
+    def get_stage_by_id(self, stage_id: int) -> Stage | None:
         for stage in self.stages:
             if stage.stage_id == stage_id:
                 return stage

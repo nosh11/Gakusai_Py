@@ -9,9 +9,9 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import ( 
     Qt, 
 )
-from common.model.game_map import MapData, load_map_data
-from common.model.map.chip_set import ChipSet, save_chipset
-from common.util.file_manager import get_resource_file_path
+from core.model.game_map import MapData, load_map_data
+from core.model.mapdata.chip_set import ChipSet, save_chipset
+from util.file_manager import get_resource_file_path
 from mapeditor.widgets.chip_editor_ui import ChipEditorUi
 
 

@@ -1,7 +1,9 @@
 import pygame
 from game.app.scene import Scene
-from common.util.file_manager import get_asset_file_path
+from util import get_asset_file_path
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT
+from game.scenes.game_scene.scene import GameScene
+from game.scenes.map import MapScene
 from game.scenes.title.choice import Choice, QuitChoice, SceneChangeChoice, ScenePushChoice
 from game.scenes.title.option import OptionScene
 
@@ -13,7 +15,9 @@ class TitleScene(Scene):
         self.root_surface.fill((100, 150, 30))
         self.background_image = pygame.image.load(get_asset_file_path("img/croissant_boy.png"))
         self.choices: list[Choice] = [
+            ScenePushChoice(self.app, "game", GameScene),
             ScenePushChoice(self.app, "options", OptionScene),
+            ScenePushChoice(self.app, "map", MapScene),
             QuitChoice(self.app, "quit")
         ]
         self.current_choice = 0
@@ -40,3 +44,7 @@ class TitleScene(Scene):
             elif pygame.key.get_pressed()[pygame.K_DOWN]:
                 self.current_choice = (self.current_choice + 1) % len(self.choices)
                 self.draw()
+    
+    def on_load(self):
+        pygame.mixer.music.load(get_asset_file_path("bgm/Best_Beat.mp3"))
+        pygame.mixer.music.play(-1)

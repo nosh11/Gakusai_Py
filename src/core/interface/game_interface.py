@@ -1,6 +1,5 @@
-from common.interface.map_interface import MapInterface
-from common.interface.player_interface import PlayerInterface
-from common.model.player import PlayerBase
+from core.interface.map_interface import MapInterface
+from core.interface.player_interface import PlayerInterface
 
 class GameInterface:
     def __init__(self, map_data: MapInterface, player: PlayerInterface):

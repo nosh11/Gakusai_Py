@@ -1,7 +1,8 @@
 import pygame
 from pygame.math import Vector2
-from common.model.player import PlayerBase
-from common.util.file_manager import get_asset_file_path
+from core.interface.player_interface import PlayerInterface
+from core.model.player import PlayerBase
+from util import get_asset_file_path
 from game.consts.screen_settings import SCREEN_SIZE, ZOOM, ZOOMED_CHIP
 from game.scenes.game_scene.components.map_field import MapField
 class Bullet:
@@ -22,7 +23,7 @@ class Bullet:
 class GamePlayer:
     is_wasd = True
 
-    def __init__(self, display_surface, map_field: MapField, player: PlayerBase):
+    def __init__(self, display_surface: pygame.Surface, map_field: MapField, player: PlayerInterface):
         self.player = player
         self.pos = Vector2(0.0, 0.0)
         self.move_speed = 0.3
@@ -40,6 +41,8 @@ class GamePlayer:
         if x < 0 or y < 0 or x >= map_data.size[0] - 1 or y >= map_data.size[1] - 1:
             return True
         chip_id = map_data.get_tile((x, y))
+        if (chip_id is None):
+            return False
         chip = map_data.chipset.load_chip(chip_id)
         return chip is not None and not chip.passable
 
@@ -64,7 +67,7 @@ class GamePlayer:
             max(0, min(self.map_field.screen_size[i] - SCREEN_SIZE[i] - ZOOMED_CHIP, self.pos[i] * ZOOMED_CHIP - SCREEN_SIZE[i] // 2))
             for i in range(2)
         ]
-        self.map_field.update_topleft(topleft)
+        self.map_field.update_topleft((topleft[0], topleft[1]))
 
     def set_position(self, pos: tuple[int, int]):
         self.pos = Vector2(pos[0], pos[1])

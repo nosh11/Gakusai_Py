@@ -1,6 +1,6 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 import pygame
-from common.util.file_manager import get_asset_file_path
+from util.file_manager import get_asset_file_path
 from game.utils.image_processor import BrightnessProcessor
 from game.interface.observe import Observable
 
@@ -13,7 +13,9 @@ class UIWidget(metaclass=ABCMeta):
 
     def get_showing_image(self) -> pygame.Surface:
         if self.showing_image is None:
-            return pygame.Surface((0, 0)).set_colorkey((0, 255, 0))
+            surface = pygame.Surface((0, 0))
+            surface.set_colorkey((0, 255, 0))
+            return surface
         return self.showing_image
 
     def set_showing_image(self, image: pygame.Surface):
@@ -36,8 +38,8 @@ class SurfaceWithText:
 class UIWidgetHoberable(UIWidget):
     def __init__(self, view_display_surface: pygame.Surface, x, y):
         super().__init__(view_display_surface, x, y)
-        self.image_normal: pygame.Surface = None
-        self.image_brighten: pygame.Surface = None
+        self.image_normal: pygame.Surface | None = None
+        self.image_brighten: pygame.Surface | None = None
 
     @abstractmethod
     def get_rect(self) -> pygame.Rect:
@@ -66,14 +68,14 @@ class UIWidgetHoberable(UIWidget):
     
 
 
-class UIWidgetClickable(UIWidgetHoberable, Observable):
+class UIWidgetClickable(UIWidgetHoberable, Observable, ABC):
     def __init__(self, view_display_surface: pygame.Surface, x, y):
         super().__init__(view_display_surface, x, y)
         Observable.__init__(self)
         self.clicked = False
 
     @abstractmethod
-    def get_rect(self):
+    def get_rect(self) -> pygame.Rect:
         pass
 
     def on_clicked(self):
@@ -112,9 +114,6 @@ class Button(UIWidgetClickable, SurfaceWithText):
         self.image_brighten = BrightnessProcessor(self.image_normal).process(30)
         self.showing_image = self.image_normal
         self.rect = self.showing_image.get_rect().move(self.pos)
-    
-    def get_rect(self) -> pygame.Rect:
-        return self.rect
 
     def get_showing_image(self) -> pygame.Surface:
         return self.showing_image

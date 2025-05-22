@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 
 import yaml
-from common.model.map.chip import Chip
-from common.util.file_manager import get_resource_file_path, get_asset_file_path
+from .chip import Chip
+from util import *
 
 @dataclass
 class ChipSet:
@@ -34,8 +34,7 @@ class ChipSet:
             chip = Chip(chip_id, True, -1, 0)
             self.chips[chip_id] = chip
         return self.chips[chip_id]
-    
-from common.util.yaml_factory import make_constructor, make_representer
+
 # YAMLのシリアライズとデシリアライズのための関数を登録
 yaml.add_representer(ChipSet, make_representer('!ChipSet'))
 yaml.add_constructor('!ChipSet', make_constructor(ChipSet))

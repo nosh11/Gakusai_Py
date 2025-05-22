@@ -4,7 +4,7 @@ import yaml
 
 @dataclass
 class Chip:
-    id: int = id
+    id: int = 0
     passable: bool = True
     durability: int = -1
     layer: int = 0
@@ -16,7 +16,7 @@ class Chip:
     def from_dict(cls, data):
         return cls(**data)
     
-from common.util.yaml_factory import make_constructor, make_representer
+from util import make_constructor, make_representer
 # YAMLのシリアライズとデシリアライズのための関数を登録
 yaml.add_representer(Chip, make_representer('!Chip'))
 yaml.add_constructor('!Chip', make_constructor(Chip))

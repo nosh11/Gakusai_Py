@@ -1,14 +1,13 @@
 import pygame
-from common.model.event import MapChangeFunction, PeriodicEvent, PlayerStepOnEvent, ShowMessageFunction
-from common.interface.game_interface import GameInterface
-from common.model.game_map import load_map_data
-from common.util.file_manager import get_asset_file_path
+from core.model.event import MapChangeFunction, PeriodicEvent, PlayerStepOnEvent, ShowMessageFunction
+from core.interface.game_interface import GameInterface
+from core.model.game_map import load_map_data
+from util import get_asset_file_path
 from game.app.scene import Scene
 from game.models.player import Player
 from game.scenes.game_scene.components.map_field import MapField
 from game.scenes.game_scene.components.message_box import MessageBox
 from game.scenes.game_scene.components.game_player import GamePlayer
-from game.scenes.pause import PauseScene
 
 SKIP_CD = 10
 
@@ -25,7 +24,7 @@ class GameScene(Scene, GameInterface):
         super().__init__(app)
     
     def get_player_pos(self) -> tuple[float, float]:
-        return tuple(self.game_player.pos)
+        return (self.game_player.pos.x, self.game_player.pos.y)
     
     def set_player_pos(self, pos: tuple[int, int]):
         self.game_player.set_position(pos)
@@ -40,21 +39,18 @@ class GameScene(Scene, GameInterface):
             path = get_asset_file_path(f"backgrounds\\{self.map_data.background_image_path}")
             self.background_image = pygame.image.load(path)
 
-    def define_text_labels(self):
-        pass
-
     def setup(self):
-        self.message_box = MessageBox(self.display_surface)
+        self.message_box = MessageBox(self.root_surface)
         self.space_pressed = False
         self.skip_pressed = False
         self.skip = False
         self.skip_cd = SKIP_CD
 
-        self.map_field = MapField(self.display_surface, self.map_data)
-        self.game_player = GamePlayer(self.display_surface, self.map_field, self.get_player())
+        self.map_field = MapField(self.root_surface, self.map_data)
+        self.game_player = GamePlayer(self.root_surface, self.map_field, self.get_player())
         self.game_player.set_position(self.map_data.init_pos)
         self.map_field.reset_map_surface()
-        self.background_image: pygame.Surface = None
+        self.background_image: pygame.Surface | None = None
         if self.map_data.background_image_path:
             path = get_asset_file_path(f"backgrounds\\{self.map_data.background_image_path}")
             self.background_image = pygame.image.load(path)
@@ -65,9 +61,9 @@ class GameScene(Scene, GameInterface):
         )
         
 
-    def display(self):
+    def draw(self):
         if self.background_image is not None:
-            self.display_surface.blit(self.background_image, (0, 0))
+            self.root_surface.blit(self.background_image, (0, 0))
         self.message_box.update()
         self.message_box.draw()
         self.map_field.draw()
@@ -80,21 +76,19 @@ class GameScene(Scene, GameInterface):
             event.check(self)
 
         if pygame.event.get(pygame.KEYDOWN):
+            if pygame.key.get_pressed()[pygame.K_z]:
+                self.z_key_pressed()
+            else:
+                self.skip_pressed = False
             if pygame.key.get_pressed()[pygame.K_SPACE]:
                 self.space_key_pressed()
-            elif pygame.key.get_pressed()[pygame.K_a]:
-                self.message_box.is_hidden = not self.message_box.is_hidden
-            elif pygame.key.get_pressed()[pygame.K_ESCAPE]:
-                self._app_controller.set_next_view(PauseScene(self._app_controller, self.get_language(), "pause"))
-            elif pygame.key.get_pressed()[pygame.K_z]:
-                self.z_key_pressed()
-        else:
-            self.space_pressed = False
-            self.skip_pressed = False
+            else:
+                self.space_pressed = False
         if self.skip:
             self.skip_cd -= 1
         if self.skip_cd <= 0:
             self.next_message()
+        self.draw()
 
     def space_key_pressed(self):
         if self.space_pressed:

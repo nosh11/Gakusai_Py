@@ -1,12 +1,6 @@
-from PyQt6.QtWidgets import (
-    QApplication, 
-    QFileDialog, 
-    QMainWindow,
-    QMenu,
-    QHBoxLayout,
-    QWidget,
-)
-from common.model import game_map
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QMenu, QHBoxLayout, QWidget
+
+from core.model import game_map
 from mapeditor.chip_editor import ChipEditor
 from mapeditor.map.map_list import MapListWidget
 from mapeditor.map_editor import MapEditor
@@ -19,7 +13,7 @@ class Main(QMainWindow):
         self.setGeometry(0, 0, 1280, 720)
         self.setStyleSheet("background-color: #2E2E2E; color: white;")
         self.setWindowTitle('マップエディタ')
-        self.editor: Editor = None
+        self.editor: Editor | None = None
         self.central_widget = QWidget(self)
         self.layout = QHBoxLayout()  # Save the layout in an instance variable
         self.central_widget.setLayout(self.layout)

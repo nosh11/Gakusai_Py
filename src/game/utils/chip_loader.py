@@ -1,5 +1,5 @@
 import cv2
-from common.consts.screen_settings import CHIP_SIZE
+from core.const import CHIP_SIZE
 from game.consts.screen_settings import ZOOMED_CHIP
 from game.scenes.utils.image_manager import convert_opencv_img_to_pygame
 

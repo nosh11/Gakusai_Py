@@ -1,5 +1,5 @@
 from enum import Enum
-from common.util.file_manager import get_asset_file_path, get_resource_file_path
+from util import get_asset_file_path, get_resource_file_path
 import yaml
 
 class Language(Enum):

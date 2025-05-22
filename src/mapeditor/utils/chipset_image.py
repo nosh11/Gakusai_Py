@@ -1,5 +1,5 @@
-from common.model.game_map import ChipSet
-from common.consts.screen_settings import CHIP_SIZE
+from core.model.game_map import ChipSet
+from core.const import CHIP_SIZE
 import cv2
 
 from PyQt6.QtGui import QImage

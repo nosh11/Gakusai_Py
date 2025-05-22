@@ -14,6 +14,3 @@ class TransitionType:
 @dataclass
 class SceneBase:
     name: str
-
-    def __repr__(self):
-        return f"SceneBase(name={self.name}, description={self.description})"

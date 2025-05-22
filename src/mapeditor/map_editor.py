@@ -14,8 +14,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import ( 
     Qt, 
 )
-from common.model.game_map import MapData, save_map_data
-from common.util.file_manager import get_resource_file_path
+from core.model.game_map import MapData, save_map_data
+from util.file_manager import get_resource_file_path
 from mapeditor.widgets.map_painter import ChipSetCanvas, MapTileCanvas, SharedImageCache
 
 class MapEditor(QWidget):

@@ -1,5 +1,5 @@
 import pygame
-from common.util.file_manager import get_asset_file_path
+from util import get_asset_file_path
 from game.app.scene import Scene
 from game.app.widget import UIWidget
 from game.consts.screen_settings import SCREEN_WIDTH

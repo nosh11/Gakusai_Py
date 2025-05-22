@@ -1,4 +1,5 @@
 from game.app.transition import SingleViewTransition, ViewTransition
+from game.interface.scene_interface import SceneInterface
 from game.interface.transition_interface import TransitionInterface
 
 class ViewTransitionSingle(TransitionInterface):
@@ -21,5 +22,5 @@ class ViewTransitionSwitcher(TransitionInterface):
         self.current_transition = 1 - self.current_transition
         return self.current_transition == 1
 
-    def get_next_view(self) -> SingleViewTransition:
+    def get_next_view(self) -> SceneInterface:
         return self.transitions[1].get_next_view()

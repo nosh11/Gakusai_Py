@@ -1,6 +1,6 @@
 import os
 
-__PROJECT_ROOT__ = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')) # プロジェクトのルートディレクトリを取得
+__PROJECT_ROOT__ = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')) # プロジェクトのルートディレクトリを取得
 __ASSETS_DIR__ = os.path.join(__PROJECT_ROOT__, "assets")
 __RESOURCE_DIR__ = os.path.join(__PROJECT_ROOT__, "resource")
 __TEMPLATE_DIR__ = os.path.join(__PROJECT_ROOT__, "template")

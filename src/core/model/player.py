@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 import yaml
 
-from common.util.file_manager import get_user_data_file_path
+from core.interface.player_interface import PlayerInterface
+from util.file_manager import get_user_data_file_path
 
 @dataclass
 class Achievement:
@@ -12,24 +13,24 @@ class Achievement:
 
 
 @dataclass
-class PlayerBase:
+class PlayerBase(PlayerInterface):
     id: int = 0
     name: str = ""
     level: int = 0
     experience: int = 0
     coins: int = 0
-    items: list[str] = None
-    achievements: list[Achievement] = None
-    settings: dict[str, bool] = None
+    items: list[str] | None = None
+    achievements: list[Achievement] | None = None
+    settings: dict[str, bool] | None = None
 
-    def set_position(self, pos: tuple[int, int]):
+    def set_position(self, pos: tuple[float, float]):
         """
         Set the player's position.
         :param pos: A tuple containing the x and y coordinates.
         """
         raise NotImplementedError("This method should be overridden in subclasses")
 
-    def get_position(self) -> tuple[int, int]:
+    def get_position(self) -> tuple[float, float]:
         """
         Get the player's position.
         :return: A tuple containing the x and y coordinates.

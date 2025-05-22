@@ -13,5 +13,25 @@
 
     "yaml.customTags": [
         "!MapData mapping"
+    ],
+
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.venv": true,
+    },
+
+    "asciiTreeGenerator.directoryIgnore": [
+        "node_modules",
+        ".git",
+        ".venv",
+        "__pycache__",
+        ".pytest_cache",
+        ".pyc"
     ]
 }

@@ -1,12 +1,23 @@
 import pygame
 
-class SceneInterface:
+from abc import ABC, abstractmethod
+
+class App:
+    pass
+
+class SceneInterface(ABC):
+    def __init__(self, app: App):
+        self.app = app
+
+    @abstractmethod
     def draw(self):
         pass
 
+    @abstractmethod
     def tick(self):
         pass
 
+    @abstractmethod
     def setup(self):
         pass
 
@@ -16,5 +27,6 @@ class SceneInterface:
     def on_unload(self):
         pass
 
+    @abstractmethod
     def get_root_surface(self) -> pygame.Surface:
         pass

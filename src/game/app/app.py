@@ -2,7 +2,7 @@
 
 import sys
 import pygame
-from common.model.language import Language
+from core.model.language import Language
 from game.interface.app_interface import AppInterface
 from game.interface.scene_interface import SceneInterface
 from game.interface.transition_interface import TransitionInterface
@@ -10,19 +10,19 @@ from game.interface.transition_interface import TransitionInterface
 
 class AppModel(AppInterface):
     def __init__(self):
-        self.scene: SceneInterface = None
+        self.scene: SceneInterface | None = None
         self.scene_queue: list[SceneInterface] = []
-        self.transition: TransitionInterface = None
+        self.transition: TransitionInterface | None = None
         self.language: Language = Language.Japanese
     
-    def change_scene(self, scene_holder: SceneInterface | type[SceneInterface]):
-        if isinstance(scene_holder, type):
-            scene = scene_holder(self)
+    def change_scene(self, scene: SceneInterface | type[SceneInterface]):
+        if isinstance(scene, type):
+            new_scene = scene(self)
         else:
-            scene = scene_holder
+            new_scene = scene
         if self.scene is not None:
             self.scene.on_unload()
-        self.scene = scene
+        self.scene = new_scene
         self.scene.on_load()
 
     def change_transition(self, transition: TransitionInterface):
@@ -42,7 +42,8 @@ class AppModel(AppInterface):
             print("No previous scene to go back to.")
     
     def add_scene(self, scene: SceneInterface):
-        self.scene_queue.append(self.scene)
+        if self.scene is not None:
+            self.scene_queue.append(self.scene)
         self.change_scene(scene)
     
     def quit(self):
@@ -68,6 +69,6 @@ class AppModel(AppInterface):
                 self.change_scene(self.transition.get_next_view())
                 self.scene = self.transition.get_next_view()
                 self.transition = None
-        else:
+        elif self.scene != None:
             self.scene.tick()
             pygame.display.get_surface().blit(self.scene.get_root_surface(), (0, 0))

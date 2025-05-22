@@ -2,8 +2,8 @@ from dataclasses import asdict, dataclass, field
 from typing import Any, List, Tuple
 
 import yaml
-from common.interface.game_interface import GameInterface
-from common.util.yaml_factory import Model, make_constructor, make_representer
+from core.interface.game_interface import GameInterface
+from util import Model, make_constructor, make_representer
 
 class EventFunctionMeta(type):
     registry = {}
@@ -83,7 +83,8 @@ class MapEvent(Model, metaclass=MapEventMeta):
     event_description: str = ""
     functions: List[EventFunction] = field(default_factory=list)
 
-    def from_dict(cls, data: dict) -> 'MapEvent':
+    @classmethod
+    def from_dict(cls, data: dict):
         event_type = data.get("event_type", "unknown")
         if event_type in MapEventMeta.registry:
             cls = MapEventMeta.registry[event_type]

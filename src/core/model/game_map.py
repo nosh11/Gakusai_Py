@@ -4,19 +4,18 @@ from dataclasses import asdict, dataclass, field
 from typing import List
 
 import yaml
-from common.interface.map_interface import MapInterface
-from common.model.event import MapEvent
-from common.model.map.chip_set import ChipSet, load_chipset
-from common.model.map.entity import CEntity
-from common.util import get_resource_file_path
-from common.util.yaml_factory import make_constructor, make_representer
+from core.interface.map_interface import MapInterface
+from core.model.event import MapEvent
+from .mapdata.chip_set import ChipSet, load_chipset
+from .mapdata.entity import CEntity
+from util import *
 
 class InvalidMapDataError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
 @dataclass
-class MapData(MapInterface):
+class MapData(Model, MapInterface):
     map_id: str
     chipset: ChipSet
     entities: List[CEntity] = field(default_factory=list)
@@ -42,7 +41,7 @@ class MapData(MapInterface):
         return data
 
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls, data: dict):
         data['chipset'] = load_chipset(data['chipset_id'])
         del data['chipset_id']
         data['entities'] = [CEntity(**entity) for entity in data.get('entities', [])]
@@ -52,7 +51,7 @@ class MapData(MapInterface):
         data['background_image_path'] = data.get('background_image_path', None)
         return cls(**data)
 
-    def is_within_wall(self, pos: tuple[int, int]):
+    def is_within_wall(self, pos: tuple[float, float]):
         return all(0 <= pos[i] < self.size[i] for i in range(2))
 
     def set_tile(self, pos: tuple[int, int], chip_id: int) -> bool:
@@ -61,9 +60,9 @@ class MapData(MapInterface):
             return True
         return False
 
-    def get_tile(self, pos: tuple[int, int]) -> int | None:
+    def get_tile(self, pos: tuple[float, float]) -> int | None:
         if self.is_within_wall(pos):
-            return self.chips_map[pos[1]][pos[0]]
+            return self.chips_map[int(pos[1])][int(pos[0])]
         return None
         
     def resize(self, new_x, new_y):
@@ -97,7 +96,7 @@ class MapData(MapInterface):
     
 
 yaml.add_representer(MapData, make_representer("!MapData"))
-yaml.add_constructor("!MapData", make_constructor(MapData))
+yaml.add_constructor("!MapData", make_constructor(MapData)) # type: ignore
 
 def load_map_data(map_id: str) -> MapData:
     """

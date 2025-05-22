@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 
-from common.model.language import Language
-from game.interface.scene_interface import SceneInterface
+from core.model.language import Language
+from game.interface.scene_interface import App, SceneInterface
 from game.interface.transition_interface import TransitionInterface
 
-
-class AppInterface(ABC):
+class AppInterface(App, ABC):
     @abstractmethod
     def change_scene(self, scene: SceneInterface | type[SceneInterface]):
         pass

@@ -4,7 +4,8 @@ import threading
 import pygame
 
 # from game.common.view import Scene
-from game.interface.scene_interface import SceneInterface
+from game.interface.app_interface import AppInterface
+from game.interface.scene_interface import App, SceneInterface
 from game.interface.transition_interface import TransitionInterface
 from game.consts import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_FPS
 
@@ -50,9 +51,9 @@ class SingleViewTransition(ViewTransition, metaclass=ABCMeta):
     def set_view(self, view: SceneInterface):
         self.view = view
     
-    def set_view_from_class(self, view: type[SceneInterface], app_controller, language, screen_id: str = None):
+    def set_view_from_class(self, view: type[SceneInterface], app: AppInterface):
         def get_scene_from_class(view: type[SceneInterface]):
-            self.view = view(app_controller, language, screen_id)
+            self.view = view(app)
             print("scene loaded")
         threading.Thread(target=get_scene_from_class, args=(view,)).start()
     
@@ -75,9 +76,9 @@ class View2ViewTransition(ViewTransition, metaclass=ABCMeta):
     def set_second_view(self, second_view: SceneInterface):
         self.second_view = second_view
     
-    def set_seconf_view_from_class(self, view: type[SceneInterface], app_controller, language):
-        def get_scene_from_class(view):
-            self.second_view = view(app_controller, language)
+    def set_seconf_view_from_class(self, view: type[SceneInterface], app_controller: App):
+        def get_scene_from_class(view: type[SceneInterface]):
+            self.second_view = view(app_controller)
             print("scene loaded")
         threading.Thread(target=get_scene_from_class, args=(view,)).start()
     
@@ -99,8 +100,8 @@ class FadeTransition(SingleViewTransition):
     def transition(self, progress: float):
         alpha = int(255 * progress)
         self.fade_surface.set_alpha(alpha)
-        self.view.display()
-        pygame.display.get_surface().blit(self.view.display_surface, (0, 0))
+        self.view.draw()
+        pygame.display.get_surface().blit(self.view.get_root_surface(), (0, 0))
         pygame.display.get_surface().blit(self.fade_surface, (0, 0))
 
 
@@ -110,7 +111,7 @@ class SingleSlideTransition(SingleViewTransition):
         self.direction = direction
 
     def transition(self, progress: float):
-        self.view.display()
+        self.view.draw()
 
         width = SCREEN_WIDTH
         height = SCREEN_HEIGHT
@@ -132,7 +133,7 @@ class SingleSlideTransition(SingleViewTransition):
 
         # fill
         pygame.display.get_surface().fill((0, 0, 0))
-        pygame.display.get_surface().blit(self.view.display_surface, (offset_x, offset_y))
+        pygame.display.get_surface().blit(self.view.get_root_surface(), (offset_x, offset_y))
 
 
 # 横からスライドするトランジション
@@ -142,8 +143,8 @@ class SlideTransition(View2ViewTransition):
         self.direction = direction
 
     def transition(self, progress: float):
-        self.showing_view.display()
-        self.second_view.display()
+        self.showing_view.draw()
+        self.second_view.draw()
 
         width = SCREEN_WIDTH
         height = SCREEN_HEIGHT
@@ -162,19 +163,21 @@ class SlideTransition(View2ViewTransition):
             offset_y = -int(height * progress)
         else:
             raise ValueError("Invalid direction value. Use 1, -1, 2, or -2.")
+        showing_root_surface = self.showing_view.get_root_surface()
+        second_root_surface = self.second_view.get_root_surface()
 
         if self.showing_view == self.first_view:
-            pygame.display.get_surface().blit(self.showing_view.display_surface, (0, 0))
-            pygame.display.get_surface().blit(self.second_view.display_surface, (offset_x, offset_y))
+            pygame.display.get_surface().blit(showing_root_surface, (0, 0))
+            pygame.display.get_surface().blit(second_root_surface, (offset_x, offset_y))
         else:
-            pygame.display.get_surface().blit(self.showing_view.display_surface, (offset_x, offset_y))
-            pygame.display.get_surface().blit(self.second_view.display_surface, (0, 0))
+            pygame.display.get_surface().blit(showing_root_surface, (offset_x, offset_y))
+            pygame.display.get_surface().blit(second_root_surface, (0, 0))
 
 
 # Radial transition
 class RadialTransition(SingleViewTransition):
     def transition(self, progress: float):
-        self.view.display()
+        self.view.draw()
 
         width = SCREEN_WIDTH
         height = SCREEN_HEIGHT
@@ -190,5 +193,5 @@ class RadialTransition(SingleViewTransition):
         pygame.draw.circle(mask, (255, 255, 255), (center_x, center_y), radius)
 
         # Apply the mask
-        pygame.display.get_surface().blit(self.view.display_surface, (0, 0))
+        pygame.display.get_surface().blit(self.view.get_root_surface(), (0, 0))
         pygame.display.get_surface().blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)

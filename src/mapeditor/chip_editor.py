@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import ( 
     Qt, 
 )
-from common.model.map.chip_set import ChipSet, save_chipset
+from core.model.mapdata.chip_set import ChipSet, save_chipset
 from mapeditor.widgets.chip_editor_ui import ChipEditorUi
 from mapeditor.widgets.map_painter import ChipSetCanvas
 
@@ -19,7 +19,7 @@ class ChipEditor(QWidget):
         self.init_ui()
 
     def init_ui(self):
-        layout: QVBoxLayout = self.layout()
+        layout: QVBoxLayout = self.layout()  # type: ignore
         self.setGeometry(0, 0, 1280, 720)
         self.setWindowTitle('チップエディタ')    
         
@@ -39,7 +39,8 @@ class ChipEditor(QWidget):
         chip_canvas.add_observer(chip_editor_ui)
         layout.addWidget(chip_editor_ui)
 
-    def keyPressEvent(self, event: PyQt6.QtGui.QKeyEvent):
-        if event.key() == PyQt6.QtCore.Qt.Key.Key_S and event.modifiers() == Qt.KeyboardModifier.ControlModifier:
+    def keyPressEvent(self, event: PyQt6.QtGui.QKeyEvent): # type: ignore
+        from PyQt6 import QtCore
+        if event.key() == QtCore.Qt.Key.Key_S and event.modifiers() == Qt.KeyboardModifier.ControlModifier:
             print("Ctrl+S pressed")
             save_chipset(self.chipset)

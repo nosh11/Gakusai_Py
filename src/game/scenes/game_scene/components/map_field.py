@@ -1,10 +1,8 @@
 from math import ceil, floor
 import cv2
 import pygame
-from common.consts.screen_settings import CHIP_SIZE
-from common.model.game_map import MapData
-from game.consts.screen_settings import SCREEN_HEIGHT, SCREEN_SIZE, SCREEN_WIDTH, ZOOM, ZOOMED_CHIP
-from game.scenes.utils.image_manager import convert_opencv_img_to_pygame
+from core.model.game_map import MapData
+from game.consts.screen_settings import SCREEN_HEIGHT, SCREEN_SIZE, SCREEN_WIDTH, ZOOMED_CHIP
 from game.utils.chip_loader import get_chip_image
 
 class MapField:
@@ -26,22 +24,15 @@ class MapField:
         self.chip_image_cache.clear()
         self.reset_map_surface()
     
-    def update_topleft(self, topleft: tuple[int, int]):
+    def update_topleft(self, topleft: tuple[float, float]):
         if (self.current_topleft != topleft):
             self.move_surface(topleft)
             self.current_topleft = topleft
 
     def draw(self):
         self.view_surface.blit(self.surface, (-((self.current_topleft[0])% ZOOMED_CHIP), -((self.current_topleft[1])% ZOOMED_CHIP)))
-    
-    def reset_map_data(self, map_data: MapData):
-        self.map_data = map_data
-        self.screen_size = (self.map_data.size[0] * ZOOMED_CHIP, self.map_data.size[1] * ZOOMED_CHIP)
-        self.surface = pygame.Surface((SCREEN_WIDTH + ZOOMED_CHIP * 2, SCREEN_HEIGHT + ZOOMED_CHIP))
-        self.chip_image_cache.clear()
-        self.reset_map_surface()
 
-    def move_surface(self, topleft: tuple[int, int]):
+    def move_surface(self, topleft: tuple[float, float]):
         # Calculate the displacement in terms of tiles
         displacement = [topleft[i] // ZOOMED_CHIP - self.current_topleft[i] // ZOOMED_CHIP for i in range(2)]
         tile_topleft = [topleft[i] / ZOOMED_CHIP for i in range(2)]
@@ -79,8 +70,8 @@ class MapField:
                 for x in range(floor(tile_topleft[0]) - 1, ceil(tile_topleft[0]) + visible_tiles[0] + 1):
                     self.draw_at(topleft, (x, y))
     
-    def draw_at(self, topleft: tuple[int, int], pos: tuple[int, int]):
-        chip_id: int = self.map_data.get_tile(pos)
+    def draw_at(self, topleft: tuple[float, float], pos: tuple[float, float]):
+        chip_id = self.map_data.get_tile(pos)
         if chip_id is None:
             return
         if chip_id not in self.chip_image_cache:

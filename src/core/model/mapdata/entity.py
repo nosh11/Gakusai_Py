@@ -1,6 +1,6 @@
 from dataclasses import dataclass, asdict, field
 import yaml
-from common.util.yaml_factory import make_constructor, make_representer
+from util import make_constructor, make_representer
 
 class CEntityMeta(type):
     registry = {}
@@ -17,7 +17,7 @@ class CEntityMeta(type):
 @dataclass
 class CEntity(metaclass=CEntityMeta):
     name: str = "unnamed entity"
-    position: list[float, float] = field(default_factory=lambda: [0.0, 0.0])
+    position: list[float] = field(default_factory=lambda: [0.0, 0.0])
 
 @dataclass
 class LivingCEntity(CEntity):

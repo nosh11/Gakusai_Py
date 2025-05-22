@@ -14,8 +14,8 @@ from PyQt6.QtWidgets import (
 )
 
 from mapeditor.widgets.map_painter.chip_cache import SharedImageCache
-from common.model.game_map import MapData
-from common.consts.screen_settings import CHIP_SIZE
+from core.model.game_map import MapData
+from core.const import CHIP_SIZE
 from mapeditor.widgets.map_painter.chipset_canvas import ChipSetCanvas
 
 class MapTileCanvas(QScrollArea):
