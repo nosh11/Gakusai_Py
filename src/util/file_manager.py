@@ -1,5 +1,6 @@
 import os
 
+
 __PROJECT_ROOT__ = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')) # プロジェクトのルートディレクトリを取得
 __ASSETS_DIR__ = os.path.join(__PROJECT_ROOT__, "assets")
 __RESOURCE_DIR__ = os.path.join(__PROJECT_ROOT__, "resource")
@@ -11,7 +12,6 @@ def get_user_data_dir() -> str:
     return __USERDATA_DIR__
 def get_user_data_file_path(file_path: str) -> str:
     return os.path.join(__USERDATA_DIR__, file_path)
-
 def get_asset_file_path(file_path: str) -> str:
     return os.path.join(__ASSETS_DIR__, file_path)
 def get_resource_file_path(file_path: str) -> str:
